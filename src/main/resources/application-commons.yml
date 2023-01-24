@@ -1,0 +1,76 @@
+management:
+  health:
+    ping:
+      enabled: true
+    db:
+      enabled: false
+    defaults:
+      enabled: false
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /api-docs
+commons:
+  http:
+    loggers:
+      filter:
+        enabled: true
+        obfuscate:
+          request:
+            headers:
+              - Authorization
+    swagger:
+      api-info:
+        title: Swagger Test
+        description: This is a sample server.
+        version: 1.0.0
+        terms-of-service-url: http://swagger.io/terms/
+        contact:
+          name:
+          url:
+          email: apiteam@swagger.io
+        license: Apache 2.0
+        license-url: http://www.apache.org/licenses/LICENSE-2.0.html
+      tags:
+        - name: example
+          description: Example Controller
+  aws-api-gw:
+    swagger:
+      apigateway-name: ${API_GATEWAY_NAME:<not defined>}
+      x-amazon-apigateway-integration:
+        connection-id: ${API_GATEWAY_CONNECTION_ID:<not defined>}
+        type: http
+        connection-type: VPC_LINK
+        uri: ${API_GATEWAY_BASE:<not defined>}
+      security-definitions:
+        - definition-name: ApiGWLambdaAuthorizer
+          type: apiKey
+          name: Authorization
+          in: header
+          x-amazon-apigateway-authtype: CUSTOM
+          x-amazon-apigateway-authorizer:
+            type: token
+            authorizer-uri: ${API_GATEWAY_URI_AUTHORIZER:<not defined>}
+            authorizer-credentials: ${API_GATEWAY_AUTHORIZER_CREDENTIALS:<not defined>}
+            identity-validation-expression: ^Bearer (.*)$
+            authorizer-result-ttl-in-seconds: 0
+      x-amazon-apigateway-cors:
+        enable-general-configuration: true
+        enable-mock-option-methods: true
+        allow-headers:
+          - Origin
+          - Authorization
+          - Content-Type
+          - Access-Control-Request-Method
+          - Access-Control-Request-Headers
+          - X-Requested-With
+          - X-Amz-Date
+          - X-Amz-Security-Token
+          - X-Api-Key
+          - X-Captcha-Response
+          - X-Amzn-Requestid

@@ -1,0 +1,105 @@
+plugins {
+    id 'org.springframework.boot' version '2.7.8'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'jacoco'
+    id 'org.sonarqube' version '3.5.0.2730'
+    id 'org.cyclonedx.bom' version '1.7.2'
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "modyo_state-machine-test"
+        property "sonar.organization", "modyo"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.exclusions", "**/*Application*, **/*Config*"
+        property "sonar.externalIssuesReportPaths", "trivy-report.json"
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+    mavenCentral()
+    maven {
+        name = 'GitHubPackages'
+        url = 'https://maven.pkg.github.com/modyo/maven-packages'
+        credentials {
+            username = System.getenv("GITHUB_USERNAME")
+            password = System.getenv("GITHUB_TOKEN")
+        }
+    }
+}
+
+group = 'com.modyo.test.statemachine'
+version = '1.0.0'
+
+apply plugin: 'java'
+apply plugin: 'java-library'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply from: 'gradle/jacoco.gradle'
+
+compileJava {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+    options.encoding = 'UTF-8'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.boot:spring-boot-dependencies:2.7.8'
+    }
+}
+
+configurations {
+    all {
+        /* only junit 5 should be used */
+        exclude group: 'junit', module: 'junit'
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+dependencies {
+
+    // Spring Boot Framework
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // Modyo Microservices Commons
+    implementation 'com.modyo.ms.commons:core:2.10.1-RELEASE'
+    implementation 'com.modyo.ms.commons:http:2.10.1-RELEASE'
+    implementation 'com.modyo.ms.commons:audit:2.10.1-RELEASE'
+    implementation 'com.modyo.ms.commons:aws-api-gw:2.10.1-RELEASE'
+
+    // Swagger
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'io.swagger:swagger-annotations:1.6.9'
+
+    // Lombok
+    implementation 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Testing
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    testImplementation 'com.tngtech.archunit:archunit:0.23.1'
+
+}
+
+test {
+    systemProperty 'file.encoding', 'utf-8'
+    useJUnitPlatform()
+}
+
+// slug size reduction for Heroku deployment
+task stage {
+    dependsOn build
+    doLast {
+        delete fileTree(dir: "build", exclude: "libs")
+        delete fileTree(dir: "build/libs", exclude: "*.jar")
+    }
+}

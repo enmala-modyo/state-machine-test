@@ -1,0 +1,38 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - echo 'Prebuild phase'
+      - COMMIT_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+  build:
+    commands:
+      - echo Build phase Started on `date`
+
+      - echo Building gradle project
+      - ./gradlew build -x test
+      - echo Project build completed on `date`
+
+      - echo Dockerhub login
+      - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD
+      - echo Docker login completed on `date`
+
+      - echo Building docker image
+      - docker build -t $ECR_REPOSITORY:$COMMIT_TAG-$GITHUB_BRANCH .
+      - echo Docker image built on `date`
+
+      - echo Login into AWS ECR
+      - $(aws ecr get-login --region $AWS_REGION --no-include-email)
+
+      - echo Tagging docker container images
+      - docker tag $ECR_REPOSITORY:$COMMIT_TAG-$GITHUB_BRANCH $ECR_REPOSITORY:$COMMIT_TAG-$GITHUB_BRANCH
+      - docker tag $ECR_REPOSITORY:$COMMIT_TAG-$GITHUB_BRANCH $ECR_REPOSITORY:latest-$GITHUB_BRANCH
+
+      - echo Pushing container images
+      - docker push $ECR_REPOSITORY:$COMMIT_TAG-$GITHUB_BRANCH
+      - docker push $ECR_REPOSITORY:latest-$GITHUB_BRANCH
+
+  post_build:
+    commands:
+      - printf '[{"name":"%s","imageUri":"%s"}]' $IMAGE_NAME $ECR_REPOSITORY:$COMMIT_TAG-$GITHUB_BRANCH > imagedefinitions.json
+artifacts:
+  files: imagedefinitions.json

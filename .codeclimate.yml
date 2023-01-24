@@ -1,0 +1,17 @@
+# For more configuration options visit https://docs.codeclimate.com/docs/advanced-configuration
+
+version: "2"
+plugins:
+  # https://docs.codeclimate.com/docs/sonar-java
+  sonar-java:
+    enabled: true
+    config:
+      sonar.java.source: "11"
+    checks:
+      squid:S1068: # "Remove unused field" issue disabled
+        enabled: false
+  # https://docs.codeclimate.com/docs/checkstyle
+  checkstyle:
+    enabled: true
+    config:
+      file: ".checkstyle.xml"

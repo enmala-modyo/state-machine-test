@@ -1,0 +1,53 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - echo 'Prebuild phase'
+      - echo SERVICE_NAME = $SERVICE_NAME
+      - echo API_ID = $API_ID
+      - echo BODY_SWAGGER = $BODY_SWAGGER
+      - echo SERVICE_PORT = $SERVICE_PORT
+      - echo APP_ENV = $APP_ENV
+      - echo API_GATEWAY_BASE = $API_GATEWAY_BASE
+      - echo API_GATEWAY_CONNECTION_ID = $API_GATEWAY_CONNECTION_ID
+      - echo API_GATEWAY_URI_AUTHORIZER = $API_GATEWAY_URI_AUTHORIZER
+      - echo API_GATEWAY_AUTHORIZER_CREDENTIALS = $API_GATEWAY_AUTHORIZER_CREDENTIALS
+      - echo API_GATEWAY_NAME = $API_GATEWAY_NAME
+      - echo DOMINIO = $DOMINIO
+      - echo MODO_PRIVADO = $MODO_PRIVADO
+      - COMMIT_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - echo COMMIT_TAG
+      - echo PERSISTENCE_URL = $PERSISTENCE_URL
+      - echo PERSISTENCE_USER = $PERSISTENCE_USER
+      - echo PERSISTENCE_PASSWORD = $PERSISTENCE_PASSWORD
+      - echo PERSISTENCE_DIALECT = $PERSISTENCE_DIALECT
+      - echo PERSISTENCE_DLL_AUTO = $PERSISTENCE_DLL_AUTO
+      - echo PERSISTENCE_SHOW_SQL = $PERSISTENCE_SHOW_SQL
+  build:
+    commands:
+      - echo Build phase Started on `date`
+      - echo "AWS VERSION"
+      - aws --version
+
+      - echo "Login into AWS ECR"
+      - $(aws ecr get-login --region $AWS_REGION --no-include-email)
+
+      - echo Running Docker $ECR_REPOSITORY:$COMMIT_TAG-$GITHUB_BRANCH
+      - echo $APP_ENV
+      - DOCKER_ID=$(docker run -d -e "API_ID=${API_ID}" -e "SERVICE_PORT=${SERVICE_PORT}" -e "APP_ENV=${APP_ENV}" -e "API_GATEWAY_BASE=${API_GATEWAY_BASE}" -e "API_GATEWAY_CONNECTION_ID=${API_GATEWAY_CONNECTION_ID}" -e "API_GATEWAY_URI_AUTHORIZER=${API_GATEWAY_URI_AUTHORIZER}" -e "API_GATEWAY_AUTHORIZER_CREDENTIALS=${API_GATEWAY_AUTHORIZER_CREDENTIALS}" -e "MODO_PRIVADO=${MODO_PRIVADO}" -e "DOMINIO=${DOMINIO}" -e "API_GATEWAY_NAME=${API_GATEWAY_NAME}" -p ${SERVICE_PORT}:${SERVICE_PORT} $ECR_REPOSITORY:$COMMIT_TAG-$GITHUB_BRANCH)
+      - echo $DOCKER_ID
+
+      - echo "Checking service health status"
+      - until $(curl --output /dev/null --silent --head --fail http://0.0.0.0:${SERVICE_PORT}/actuator/health/ping); do printf '.';sleep 5;done
+      - echo "Service health is UP [ping]"
+
+      - echo "Starting API Gateway rest-api customization"
+      - touch ${BODY_SWAGGER}
+      - curl -L http://0.0.0.0:${SERVICE_PORT}/swagger-for-aws-api-gw > ${BODY_SWAGGER}
+      - cat ${BODY_SWAGGER}
+      - docker stop ${DOCKER_ID}
+      - echo "Merging API Gateway new endpoints as per swagger"
+      - aws apigateway put-rest-api --rest-api-id ${API_ID} --mode merge --no-fail-on-warnings --body 'fileb://${BODY_SWAGGER}'
+      - echo Build phase Finished on `date`
+
+      - echo "DONE"

@@ -1,0 +1,14 @@
+server:
+  port: ${SERVICE_PORT:8080}
+spring:
+  profiles:
+    active: ${STAGE_NAME:certification}
+    include:
+      - commons
+    group:
+      certification: datasources-certification
+      staging: datasources-staging
+      production: datasources-production
+  application:
+    name: state-machine-test
+    
