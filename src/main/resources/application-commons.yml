@@ -10,11 +10,6 @@ management:
     health:
       show-details: always
       show-components: always
-springfox:
-  documentation:
-    swagger:
-      v2:
-        path: /api-docs
 commons:
   http:
     loggers:

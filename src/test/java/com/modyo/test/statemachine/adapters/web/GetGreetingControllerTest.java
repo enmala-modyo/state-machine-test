@@ -1,11 +1,10 @@
-package com.modyo.test.statemachine.web;
+package com.modyo.test.statemachine.adapters.web;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
-import com.modyo.test.statemachine.adapters.web.GetGreetingController;
 import com.modyo.test.statemachine.adapters.web.dto.GreetingDto;
 import com.modyo.test.statemachine.application.port.in.InputPort;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
-class GetGreetingControllerTestDto {
+class GetGreetingControllerTest {
 
   @Mock
   InputPort inputPort;

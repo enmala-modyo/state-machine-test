@@ -1,0 +1,140 @@
+package com.modyo.test.statemachine.adapters.persistence;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.modyo.ms.commons.core.exceptions.NotFoundException;
+import com.modyo.test.statemachine.config.statemachine.StatesEnum;
+import com.modyo.test.statemachine.domain.model.Solicitud;
+import java.util.ArrayList;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+@ContextConfiguration(classes = {SolicitudPersistenceAdapter.class})
+@ExtendWith(SpringExtension.class)
+class SolicitudPersistenceAdapterTest {
+
+  @MockBean
+  private SolicitudJpaRepository solicitudJpaRepository;
+
+  @MockBean
+  private SolicitudMapper solicitudMapper;
+
+  @Autowired
+  SolicitudPersistenceAdapter solicitudPersistenceAdapter;
+
+  @BeforeEach
+  void setUp() {
+  }
+
+  @Test
+  void testCreate() {
+    SolicitudJpaEntity solicitudJpaEntity = new SolicitudJpaEntity();
+    solicitudJpaEntity.setId(123L);
+    solicitudJpaEntity.setName("Name");
+    solicitudJpaEntity.setState(StatesEnum.SI);
+    when(solicitudJpaRepository.save(any())).thenReturn(solicitudJpaEntity);
+    Solicitud solicitud = new Solicitud();
+    when(solicitudMapper.toEntity(any())).thenReturn(solicitud);
+    assertEquals(solicitud, solicitudPersistenceAdapter.create("Name"));
+    verify(solicitudJpaRepository).save(any());
+    verify(solicitudMapper).toEntity(any());
+  }
+
+  @Test
+  void testCreate2() {
+    SolicitudJpaEntity solicitudJpaEntity = new SolicitudJpaEntity();
+    solicitudJpaEntity.setId(123L);
+    solicitudJpaEntity.setName("Name");
+    solicitudJpaEntity.setState(StatesEnum.SI);
+    when(solicitudJpaRepository.save((SolicitudJpaEntity) any())).thenReturn(solicitudJpaEntity);
+    when(solicitudMapper.toEntity((SolicitudJpaEntity) any())).thenThrow(new NotFoundException());
+    assertThrows(NotFoundException.class, () -> solicitudPersistenceAdapter.create("Name"));
+    verify(solicitudJpaRepository).save((SolicitudJpaEntity) any());
+    verify(solicitudMapper).toEntity((SolicitudJpaEntity) any());
+  }
+
+  @Test
+  void testLoad() {
+    SolicitudJpaEntity solicitudJpaEntity = new SolicitudJpaEntity();
+    solicitudJpaEntity.setId(123L);
+    solicitudJpaEntity.setName("Name");
+    solicitudJpaEntity.setState(StatesEnum.SI);
+    Optional<SolicitudJpaEntity> ofResult = Optional.of(solicitudJpaEntity);
+    when(solicitudJpaRepository.findById((Long) any())).thenReturn(ofResult);
+    Solicitud solicitud = new Solicitud();
+    when(solicitudMapper.toEntity((SolicitudJpaEntity) any())).thenReturn(solicitud);
+    assertSame(solicitud, solicitudPersistenceAdapter.load(123L));
+    verify(solicitudJpaRepository).findById((Long) any());
+    verify(solicitudMapper).toEntity((SolicitudJpaEntity) any());
+  }
+
+  @Test
+  void testLoad2() {
+    SolicitudJpaEntity solicitudJpaEntity = new SolicitudJpaEntity();
+    solicitudJpaEntity.setId(123L);
+    solicitudJpaEntity.setName("Name");
+    solicitudJpaEntity.setState(StatesEnum.SI);
+    Optional<SolicitudJpaEntity> ofResult = Optional.of(solicitudJpaEntity);
+    when(solicitudJpaRepository.findById((Long) any())).thenReturn(ofResult);
+    when(solicitudMapper.toEntity((SolicitudJpaEntity) any())).thenThrow(new NotFoundException());
+    assertThrows(NotFoundException.class, () -> solicitudPersistenceAdapter.load(123L));
+    verify(solicitudJpaRepository).findById((Long) any());
+    verify(solicitudMapper).toEntity((SolicitudJpaEntity) any());
+  }
+
+  @Test
+  void testLoadAllActive() {
+    when(solicitudJpaRepository.findAllByStateNot((StatesEnum) any())).thenReturn(new ArrayList<>());
+    assertTrue(solicitudPersistenceAdapter.loadAllActive().isEmpty());
+    verify(solicitudJpaRepository).findAllByStateNot((StatesEnum) any());
+  }
+
+  @Test
+  void testSave() {
+    SolicitudJpaEntity solicitudJpaEntity = new SolicitudJpaEntity();
+    solicitudJpaEntity.setId(123L);
+    solicitudJpaEntity.setName("Name");
+    solicitudJpaEntity.setState(StatesEnum.SI);
+    when(solicitudJpaRepository.save((SolicitudJpaEntity) any())).thenReturn(solicitudJpaEntity);
+
+    SolicitudJpaEntity solicitudJpaEntity1 = new SolicitudJpaEntity();
+    solicitudJpaEntity1.setId(123L);
+    solicitudJpaEntity1.setName("Name");
+    solicitudJpaEntity1.setState(StatesEnum.SI);
+    when(solicitudMapper.toJpaEntity((Solicitud) any())).thenReturn(solicitudJpaEntity1);
+    solicitudPersistenceAdapter.save(new Solicitud());
+    verify(solicitudJpaRepository).save((SolicitudJpaEntity) any());
+    verify(solicitudMapper).toJpaEntity((Solicitud) any());
+  }
+
+  @Test
+  void testSave2() {
+    SolicitudJpaEntity solicitudJpaEntity = new SolicitudJpaEntity();
+    solicitudJpaEntity.setId(123L);
+    solicitudJpaEntity.setName("Name");
+    solicitudJpaEntity.setState(StatesEnum.SI);
+    when(solicitudJpaRepository.save( any())).thenReturn(solicitudJpaEntity);
+    when(solicitudMapper.toJpaEntity( any())).thenThrow(new NotFoundException());
+    var solicitud = new Solicitud();
+    assertThrows(NotFoundException.class, () -> solicitudPersistenceAdapter.save(solicitud));
+    verify(solicitudMapper).toJpaEntity(any());
+  }
+
+  @Test
+  void test() {
+    assertThat(solicitudPersistenceAdapter).isNotNull();
+  }
+}
