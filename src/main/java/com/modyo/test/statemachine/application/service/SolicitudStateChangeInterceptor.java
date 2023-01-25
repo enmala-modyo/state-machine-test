@@ -9,6 +9,7 @@ import com.modyo.test.statemachine.config.statemachine.StatesEnum;
 import com.modyo.test.statemachine.domain.model.Solicitud;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.state.State;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class SolicitudStateChangeInterceptor extends StateMachineInterceptorAdapter<StatesEnum, EventsEnum> {
 
   private final LoadSolicitudPort loadPort;
@@ -27,13 +29,14 @@ public class SolicitudStateChangeInterceptor extends StateMachineInterceptorAdap
   public void preStateChange(State<StatesEnum, EventsEnum> state, Message<EventsEnum> message,
       Transition<StatesEnum, EventsEnum> transition, StateMachine<StatesEnum, EventsEnum> stateMachine,
       StateMachine<StatesEnum, EventsEnum> rootStateMachine) {
-
+    log.info("Save state change");
     Optional.ofNullable(message)
-        .ifPresent(msg -> Optional.ofNullable((Long) msg.getHeaders().getOrDefault(SM_ENTITY_HEADER, -1L))
+        .ifPresent(msg -> Optional.ofNullable((Long)(msg.getHeaders().getOrDefault(SM_ENTITY_HEADER, -1L)))
             .ifPresent(solicitudId -> {
               Solicitud solicitud = loadPort.load(solicitudId);
               solicitud.setState(state.getId().name());
               savePort.save(solicitud);
+              log.info("State change saved for {} {}", solicitudId, state.getId().name());
             }));
   }
 }

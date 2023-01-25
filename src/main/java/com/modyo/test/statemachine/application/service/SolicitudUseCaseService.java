@@ -11,6 +11,7 @@ import com.modyo.test.statemachine.domain.model.Solicitud;
 import java.util.List;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.StateMachine;
@@ -21,6 +22,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SolicitudUseCaseService implements SolicitudUseCase {
 
   private final StateMachineFactory<StatesEnum, EventsEnum> stateMachineFactory;
@@ -56,20 +58,21 @@ public class SolicitudUseCaseService implements SolicitudUseCase {
     Message<EventsEnum> msg = MessageBuilder.withPayload(event)
         .setHeader(SM_ENTITY_HEADER, solicitudId)
         .build();
-    sm.sendEvent(Mono.just(msg));
+    sm.sendEvent(Mono.just(msg)).subscribe();
   }
 
   private StateMachine<StatesEnum, EventsEnum> build(Solicitud solicitud) {
     StateMachine<StatesEnum, EventsEnum> sm = stateMachineFactory.getStateMachine(Long.toString(solicitud.getId()));
-    sm.stopReactively().block();
+    sm.stopReactively().subscribe();
     sm.getStateMachineAccessor()
         .doWithAllRegions(sma -> {
           sma.addStateMachineInterceptor(interceptor);
           sma.resetStateMachineReactively(
               new DefaultStateMachineContext<>(StatesEnum.valueOf(solicitud.getState()), null,
-                  null, null));
+                  null, null)).subscribe();
+          log.info("Resetting state machine: {} ", sma);
         });
-    sm.startReactively().block();
+    sm.startReactively().subscribe();
     return sm;
   }
 }
