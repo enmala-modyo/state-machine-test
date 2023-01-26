@@ -10,19 +10,19 @@ jobs:
     name: Verify if the template was applied
     runs-on: ubuntu-latest
     outputs:
-      files_exists: ${{ steps.check_file.output.test }}
+      files_exists: ${{ steps.check_file.outputs.test }}
     steps:
       - uses: actions/checkout@v3
       - name: Check file existence
         id: check_file
         run: |
           if test -f "cookiecutter.json"; then
-            echo "test=true" >> $GITHUB_OUTPUT
+            echo "test='true'" >> $GITHUB_OUTPUT
           else
-            echo "test=false" >> $GITHUB_OUTPUT
+            echo "test='false'" >> $GITHUB_OUTPUT
           fi
       - name: File not exists
-        if: steps.check_file.output.test == 'false'
+        if: steps.check_file.outputs.test == 'false'
         # Only runs if the template config file not exists
         run: echo template config file not exists!
   build:
