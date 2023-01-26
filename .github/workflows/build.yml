@@ -90,7 +90,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
         with:
           gradle-version: 6.9
-          arguments: build cyclonedxBom
+          arguments: cyclonedxBom
       # Run trivy over the BOM file and generate a Sonarcloud compatible report
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
