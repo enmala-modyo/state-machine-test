@@ -16,6 +16,8 @@ import org.springframework.statemachine.state.State;
 import org.springframework.statemachine.support.StateMachineInterceptorAdapter;
 import org.springframework.statemachine.transition.Transition;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Component
@@ -26,14 +28,15 @@ public class SolicitudStateChangeInterceptor extends StateMachineInterceptorAdap
   private final SaveSolicitudPort savePort;
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRED)
   public void preStateChange(State<StatesEnum, EventsEnum> state, Message<EventsEnum> message,
       Transition<StatesEnum, EventsEnum> transition, StateMachine<StatesEnum, EventsEnum> stateMachine,
       StateMachine<StatesEnum, EventsEnum> rootStateMachine) {
     log.info("Save state change");
     Optional.ofNullable(message)
-        .ifPresent(msg -> Optional.ofNullable((Long)(msg.getHeaders().getOrDefault(SM_ENTITY_HEADER, -1L)))
+        .ifPresent(msg -> Optional.ofNullable((Long) (msg.getHeaders().getOrDefault(SM_ENTITY_HEADER, -1L)))
             .ifPresent(solicitudId -> {
-              Solicitud solicitud = loadPort.load(solicitudId);
+              Solicitud solicitud = loadPort.loadAndLock(solicitudId);
               solicitud.setState(state.getId().name());
               savePort.save(solicitud);
               log.info("State change saved for {} {}", solicitudId, state.getId().name());

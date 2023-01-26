@@ -9,8 +9,8 @@ import com.modyo.test.statemachine.config.statemachine.EventsEnum;
 import com.modyo.test.statemachine.config.statemachine.StatesEnum;
 import com.modyo.test.statemachine.domain.model.Solicitud;
 import java.util.List;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
@@ -18,6 +18,7 @@ import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -49,15 +50,19 @@ public class SolicitudUseCaseService implements SolicitudUseCase {
   @Override
   public Solicitud processEvent(Long solicitudId, String eventName) {
     sendEvent(solicitudId, EventsEnum.valueOf(eventName));
-    return loadPort.load(solicitudId);
+    return loadPort.loadAndLock(solicitudId);
   }
 
+  @SneakyThrows
   private void sendEvent(Long solicitudId, EventsEnum event) {
-    Solicitud solicitud = loadPort.load(solicitudId);
+    log.info("Loading solicitud for event: {} {}", solicitudId, event.name());
+    Solicitud solicitud = loadPort.loadAndLock(solicitudId);
+    log.info("building statemachine for event: {} {}", solicitudId, event.name());
     var sm = build(solicitud);
     Message<EventsEnum> msg = MessageBuilder.withPayload(event)
         .setHeader(SM_ENTITY_HEADER, solicitudId)
         .build();
+    log.info("Sending event: {} {}", solicitudId, event.name());
     sm.sendEvent(Mono.just(msg)).subscribe();
   }
 

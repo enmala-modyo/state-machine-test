@@ -9,7 +9,15 @@ Para la implementación de flujos simples debería ser suficiente.
 
 En el ejemplo se debe notar que los cambios de estado se ejecutan en un método anotado como `@Transactional`.
 Esto para tratar de evitar que dos instancias realicen cambios simultáneos en la máquina.
-El registro en la BD de los cambios de estado se realiza utilizando un interceptor.
+El registro en la BD de los cambios de estado se ejecuta utilizando un interceptor.
+En el repositorio para la solicitud `SolicitudJpaRepository` se ha implementado el método findByIdLocked con la anotación `@Lock`
+para impedir que otras instancias de la máquina puedan actuar sobre el registro durante un cambio de estado.
+```
+  @Lock(LockModeType.PESSIMISTIC_WRITE)
+  Optional<SolicitudJpaEntity> findByIdLocked(Long aLong);
+```
+Esta no es la configuración ideal, pues bloquea todas las lecturas de ese registro durante el cambio de estado,
+pero por ahora es la única forma que he encontrado de garantizar que no se ejecuten cambios simultáneos.
 
 La máquina implementada es la siguiente:
 ```mermaid

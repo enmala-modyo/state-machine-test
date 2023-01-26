@@ -82,16 +82,16 @@ class SolicitudPersistenceAdapterTest {
   }
 
   @Test
-  void testLoad2() {
+  void testLoadAndLock() {
     SolicitudJpaEntity solicitudJpaEntity = new SolicitudJpaEntity();
     solicitudJpaEntity.setId(123L);
     solicitudJpaEntity.setName("Name");
     solicitudJpaEntity.setState(StatesEnum.SI);
     Optional<SolicitudJpaEntity> ofResult = Optional.of(solicitudJpaEntity);
-    when(solicitudJpaRepository.findById((Long) any())).thenReturn(ofResult);
+    when(solicitudJpaRepository.findByIdLocked((Long) any())).thenReturn(ofResult);
     when(solicitudMapper.toEntity((SolicitudJpaEntity) any())).thenThrow(new NotFoundException());
-    assertThrows(NotFoundException.class, () -> solicitudPersistenceAdapter.load(123L));
-    verify(solicitudJpaRepository).findById((Long) any());
+    assertThrows(NotFoundException.class, () -> solicitudPersistenceAdapter.loadAndLock(123L));
+    verify(solicitudJpaRepository).findByIdLocked((Long) any());
     verify(solicitudMapper).toEntity((SolicitudJpaEntity) any());
   }
 

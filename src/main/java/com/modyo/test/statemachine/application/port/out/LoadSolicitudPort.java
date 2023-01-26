@@ -6,5 +6,7 @@ import java.util.List;
 public interface LoadSolicitudPort {
   Solicitud load(Long id);
 
+  Solicitud loadAndLock(Long id);
+
   List<Solicitud> loadAllActive();
 }
