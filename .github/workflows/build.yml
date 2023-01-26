@@ -17,9 +17,9 @@ jobs:
         id: check_file
         run: |
           if test -f "cookiecutter.json"; then
-            echo "test='true'" >> $GITHUB_OUTPUT
+            echo "test=true" >> $GITHUB_OUTPUT
           else
-            echo "test='false'" >> $GITHUB_OUTPUT
+            echo "test=false" >> $GITHUB_OUTPUT
           fi
       - name: File not exists
         if: steps.check_file.outputs.test == 'false'
