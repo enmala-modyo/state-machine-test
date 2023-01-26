@@ -23,7 +23,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: [verify]
+    needs: verify
     if: needs.verify.outputs.files_exists == 'false'
     steps:
       - uses: actions/checkout@v3
@@ -76,7 +76,7 @@ jobs:
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar       
+          restore-keys: ${{ runner.os }}-sonar
       # Generate Bill of Materials (BOM) file with dependencies
       - name: generate dependencies BOM
         uses: gradle/gradle-build-action@v2
@@ -97,7 +97,7 @@ jobs:
           template: '@/github/workspace/sonar.tpl'
           security-checks: 'vuln'
           exit-code: '0'
-          ignore-unfixed: false   
+          ignore-unfixed: false
       - name: Build and test
         uses: gradle/gradle-build-action@v2
         env:
