@@ -3,9 +3,7 @@ package com.modyo.test.statemachine.application.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,18 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.statemachine.StateMachine;
-import org.springframework.statemachine.access.StateMachineAccessor;
 import org.springframework.statemachine.config.StateMachineFactory;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import reactor.core.publisher.Mono;
 
-@ContextConfiguration(classes = {SolicitudUseCaseService.class})
-@ExtendWith(SpringExtension.class)
+@SpringBootTest
 class SolicitudUseCaseServiceTest {
 
   @MockBean
@@ -44,16 +36,12 @@ class SolicitudUseCaseServiceTest {
   @Autowired
   private SolicitudUseCaseService solicitudUseCaseService;
 
-  @MockBean
+  @Autowired
   private StateMachineFactory<StatesEnum, EventsEnum> stateMachineFactory;
 
   @BeforeEach
   void setup() {
-    var mockStateMachine = mock(StateMachine.class);
-    when(stateMachineFactory.getStateMachine(anyString())).thenReturn(mockStateMachine);
-    when(mockStateMachine.stopReactively()).thenReturn(mock(Mono.class));
-    when(mockStateMachine.startReactively()).thenReturn(mock(Mono.class));
-    when(mockStateMachine.getStateMachineAccessor()).thenReturn(mock(StateMachineAccessor.class));
+
   }
 
   @Test
@@ -87,8 +75,10 @@ class SolicitudUseCaseServiceTest {
   void testProcessEvent() {
     Solicitud solicitud = new Solicitud();
     solicitud.setId(123L);
-    when(loadSolicitudPort.load((Long) any())).thenReturn(solicitud);
-    var result = solicitudUseCaseService.processEvent(123L, "E1");
+    solicitud.setName("test");
+    solicitud.setState("S1");
+    when(loadSolicitudPort.loadAndLock(any())).thenReturn(solicitud);
+    var result = solicitudUseCaseService.processEvent(123L, "E2");
     assertEquals(solicitud, result);
   }
 

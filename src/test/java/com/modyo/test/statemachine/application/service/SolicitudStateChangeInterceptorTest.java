@@ -49,7 +49,7 @@ class SolicitudStateChangeInterceptorTest {
 
   @Test
   void testPreStateChange1() {
-    when(loadSolicitudPort.load((Long) any())).thenReturn(new Solicitud());
+    when(loadSolicitudPort.loadAndLock((Long) any())).thenReturn(new Solicitud());
     doNothing().when(saveSolicitudPort).save((Solicitud) any());
     EnumState<StatesEnum, EventsEnum> state = new EnumState<>(StatesEnum.SI);
     GenericMessage<EventsEnum> message = new GenericMessage<>(EventsEnum.E0, new HashMap<>());
@@ -72,13 +72,13 @@ class SolicitudStateChangeInterceptorTest {
     ArrayList<Transition<StatesEnum, EventsEnum>> transitions1 = new ArrayList<>();
     solicitudStateChangeInterceptor.preStateChange(state, message, transition, stateMachine,
         new ObjectStateMachine<>(states1, transitions1, new EnumState<>(StatesEnum.SI)));
-    verify(loadSolicitudPort).load((Long) any());
+    verify(loadSolicitudPort).loadAndLock((Long) any());
     verify(saveSolicitudPort).save((Solicitud) any());
   }
 
   @Test
   void testPreStateChange2() {
-    when(loadSolicitudPort.load((Long) any())).thenReturn(new Solicitud());
+    when(loadSolicitudPort.loadAndLock((Long) any())).thenReturn(new Solicitud());
     doNothing().when(saveSolicitudPort).save((Solicitud) any());
     State<StatesEnum, EventsEnum> state = (State<StatesEnum, EventsEnum>) mock(State.class);
     when(state.getId()).thenReturn(StatesEnum.SI);

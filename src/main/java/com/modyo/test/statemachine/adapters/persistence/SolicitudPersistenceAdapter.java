@@ -29,7 +29,12 @@ public class SolicitudPersistenceAdapter implements LoadSolicitudPort, CreateSol
   public Solicitud load(Long id) {
     var jpaEntity = repository.findById(id);
     return mapper.toEntity(jpaEntity.orElseThrow(NotFoundException::new));
+  }
 
+  @Override
+  public Solicitud loadAndLock(Long id) {
+    var jpaEntity = repository.findByIdLocked(id);
+    return mapper.toEntity(jpaEntity.orElseThrow(NotFoundException::new));
   }
 
   @Override
