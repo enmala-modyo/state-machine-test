@@ -9,21 +9,26 @@ jobs:
   verify:
     name: Verify if the template was applied
     runs-on: ubuntu-latest
+    outputs:
+      files_exists: ${{ steps.check_file.outputs.test }}
     steps:
       - uses: actions/checkout@v3
       - name: Check file existence
-        id: check_files
-        uses: andstor/file-existence-action@v2
-        with:
-          files: "cookiecutter.json"
+        id: check_file
+        run: |
+          if test -f "cookiecutter.json"; then
+            echo "test=true" >> $GITHUB_OUTPUT
+          else
+            echo "test=false" >> $GITHUB_OUTPUT
+          fi
       - name: File not exists
-        if: steps.check_files.outputs.files_exists == 'false'
+        if: steps.check_file.outputs.test == 'false'
         # Only runs if the template config file not exists
         run: echo template config file not exists!
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: [verify]
+    needs: verify
     if: needs.verify.outputs.files_exists == 'false'
     steps:
       - uses: actions/checkout@v3
@@ -76,7 +81,7 @@ jobs:
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar       
+          restore-keys: ${{ runner.os }}-sonar
       # Generate Bill of Materials (BOM) file with dependencies
       - name: generate dependencies BOM
         uses: gradle/gradle-build-action@v2
@@ -85,7 +90,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
         with:
           gradle-version: 6.9
-          arguments: build cyclonedxBom
+          arguments: cyclonedxBom
       # Run trivy over the BOM file and generate a Sonarcloud compatible report
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
@@ -97,7 +102,7 @@ jobs:
           template: '@/github/workspace/sonar.tpl'
           security-checks: 'vuln'
           exit-code: '0'
-          ignore-unfixed: false   
+          ignore-unfixed: false
       - name: Build and test
         uses: gradle/gradle-build-action@v2
         env:
