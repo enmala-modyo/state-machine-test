@@ -18,7 +18,6 @@ class DependencyRuleTests {
         .withAdaptersLayer(adaptersPackage)
         .incoming("web")
         .outgoing("persistence")
-        .outgoing("restclient")
         .and()
         .withApplicationLayer(applicationPackage)
         .services("service")

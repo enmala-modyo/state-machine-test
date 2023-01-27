@@ -32,8 +32,8 @@ commons:
         license: Apache 2.0
         license-url: http://www.apache.org/licenses/LICENSE-2.0.html
       tags:
-        - name: example
-          description: Example Controller
+        - name: statemachine
+          description: State Machine Controller
   aws-api-gw:
     swagger:
       apigateway-name: ${API_GATEWAY_NAME:<not defined>}
