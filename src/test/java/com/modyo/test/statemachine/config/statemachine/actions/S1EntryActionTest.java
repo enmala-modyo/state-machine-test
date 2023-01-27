@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.modyo.ms.commons.core.exceptions.TechnicalErrorException;
+import com.modyo.test.statemachine.application.service.actions.S1EntryAction;
 import com.modyo.test.statemachine.config.statemachine.StatesEnum;
 import com.modyo.test.statemachine.domain.model.Solicitud;
 import org.junit.jupiter.api.Test;
