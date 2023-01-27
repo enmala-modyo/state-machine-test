@@ -1,4 +1,4 @@
-# Spring Statemachine demo
+# Spring Statemachine demo - Versión Interceptor
 
 Esta aplicación es un pequeño ejemplo del uso de Spring Statemachine con persistencia JPA.
 
@@ -26,7 +26,15 @@ Máquina de Estados
 ---
 stateDiagram-v2
   direction LR
+  classDef pseudo fill:lightblue
   state if_state <<choice>>
+  S1
+  note left of S1
+    on enter: A1
+  end note
+  note right of S1
+    on exit: A2
+  end note
     [*] --> S1 : E0
     S1 --> S2 : E1
     S1 --> S3 : E2
@@ -34,6 +42,7 @@ stateDiagram-v2
     if_state --> [*] : True
     if_state --> S3 : False
     S3 --> [*] : E4
+    class S2 pseudo
 ```
 
 - Las solicitudes comienzan en el estado inicial al momento de crearse.
