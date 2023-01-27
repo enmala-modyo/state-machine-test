@@ -59,11 +59,11 @@ class SolicitudPersistenceAdapterTest {
     solicitudJpaEntity.setId(123L);
     solicitudJpaEntity.setName("Name");
     solicitudJpaEntity.setState(StatesEnum.SI);
-    when(solicitudJpaRepository.save((SolicitudJpaEntity) any())).thenReturn(solicitudJpaEntity);
-    when(solicitudMapper.toEntity((SolicitudJpaEntity) any())).thenThrow(new NotFoundException());
+    when(solicitudJpaRepository.save( any())).thenReturn(solicitudJpaEntity);
+    when(solicitudMapper.toEntity( any())).thenThrow(new NotFoundException());
     assertThrows(NotFoundException.class, () -> solicitudPersistenceAdapter.create("Name"));
-    verify(solicitudJpaRepository).save((SolicitudJpaEntity) any());
-    verify(solicitudMapper).toEntity((SolicitudJpaEntity) any());
+    verify(solicitudJpaRepository).save( any());
+    verify(solicitudMapper).toEntity( any());
   }
 
   @Test
@@ -73,12 +73,12 @@ class SolicitudPersistenceAdapterTest {
     solicitudJpaEntity.setName("Name");
     solicitudJpaEntity.setState(StatesEnum.SI);
     Optional<SolicitudJpaEntity> ofResult = Optional.of(solicitudJpaEntity);
-    when(solicitudJpaRepository.findById((Long) any())).thenReturn(ofResult);
+    when(solicitudJpaRepository.findById(any())).thenReturn(ofResult);
     Solicitud solicitud = new Solicitud();
-    when(solicitudMapper.toEntity((SolicitudJpaEntity) any())).thenReturn(solicitud);
+    when(solicitudMapper.toEntity(any())).thenReturn(solicitud);
     assertSame(solicitud, solicitudPersistenceAdapter.load(123L));
-    verify(solicitudJpaRepository).findById((Long) any());
-    verify(solicitudMapper).toEntity((SolicitudJpaEntity) any());
+    verify(solicitudJpaRepository).findById( any());
+    verify(solicitudMapper).toEntity( any());
   }
 
   @Test
@@ -88,18 +88,26 @@ class SolicitudPersistenceAdapterTest {
     solicitudJpaEntity.setName("Name");
     solicitudJpaEntity.setState(StatesEnum.SI);
     Optional<SolicitudJpaEntity> ofResult = Optional.of(solicitudJpaEntity);
-    when(solicitudJpaRepository.findByIdLocked((Long) any())).thenReturn(ofResult);
-    when(solicitudMapper.toEntity((SolicitudJpaEntity) any())).thenThrow(new NotFoundException());
+    when(solicitudJpaRepository.findByIdLocked( any())).thenReturn(ofResult);
+    when(solicitudMapper.toEntity( any())).thenReturn(new Solicitud());
+    solicitudPersistenceAdapter.loadAndLock(123L);
+    verify(solicitudJpaRepository).findByIdLocked( any());
+    verify(solicitudMapper).toEntity( any());
+  }
+
+  @Test
+  void testLoadAndLock_NotFound() {
+    Optional<SolicitudJpaEntity> ofResult = Optional.empty();
+    when(solicitudJpaRepository.findByIdLocked(any())).thenReturn(ofResult);
     assertThrows(NotFoundException.class, () -> solicitudPersistenceAdapter.loadAndLock(123L));
-    verify(solicitudJpaRepository).findByIdLocked((Long) any());
-    verify(solicitudMapper).toEntity((SolicitudJpaEntity) any());
+    verify(solicitudJpaRepository).findByIdLocked( any());
   }
 
   @Test
   void testLoadAllActive() {
-    when(solicitudJpaRepository.findAllByStateNot((StatesEnum) any())).thenReturn(new ArrayList<>());
+    when(solicitudJpaRepository.findAllByStateNot( any())).thenReturn(new ArrayList<>());
     assertTrue(solicitudPersistenceAdapter.loadAllActive().isEmpty());
-    verify(solicitudJpaRepository).findAllByStateNot((StatesEnum) any());
+    verify(solicitudJpaRepository).findAllByStateNot( any());
   }
 
   @Test
@@ -108,16 +116,16 @@ class SolicitudPersistenceAdapterTest {
     solicitudJpaEntity.setId(123L);
     solicitudJpaEntity.setName("Name");
     solicitudJpaEntity.setState(StatesEnum.SI);
-    when(solicitudJpaRepository.save((SolicitudJpaEntity) any())).thenReturn(solicitudJpaEntity);
+    when(solicitudJpaRepository.save( any())).thenReturn(solicitudJpaEntity);
 
     SolicitudJpaEntity solicitudJpaEntity1 = new SolicitudJpaEntity();
     solicitudJpaEntity1.setId(123L);
     solicitudJpaEntity1.setName("Name");
     solicitudJpaEntity1.setState(StatesEnum.SI);
-    when(solicitudMapper.toJpaEntity((Solicitud) any())).thenReturn(solicitudJpaEntity1);
+    when(solicitudMapper.toJpaEntity( any())).thenReturn(solicitudJpaEntity1);
     solicitudPersistenceAdapter.save(new Solicitud());
-    verify(solicitudJpaRepository).save((SolicitudJpaEntity) any());
-    verify(solicitudMapper).toJpaEntity((Solicitud) any());
+    verify(solicitudJpaRepository).save( any());
+    verify(solicitudMapper).toJpaEntity( any());
   }
 
   @Test
