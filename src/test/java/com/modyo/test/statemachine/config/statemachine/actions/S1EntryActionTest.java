@@ -7,8 +7,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.modyo.ms.commons.core.exceptions.TechnicalErrorException;
-import com.modyo.test.statemachine.config.statemachine.EventsEnum;
 import com.modyo.test.statemachine.config.statemachine.StatesEnum;
+import com.modyo.test.statemachine.domain.model.Solicitud;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,18 +27,18 @@ class S1EntryActionTest {
 
   @Test
   void testExecute_WithNoContext() {
-    StateContext<StatesEnum, EventsEnum> context = mock(StateContext.class);
+    StateContext<String, String> context = mock(StateContext.class);
     assertThrows(TechnicalErrorException.class,()->this.s1EntryAction.execute(context));
   }
 
   @Test
   void testExecute_WithContext() {
-    Transition<StatesEnum, EventsEnum> transition = mock(Transition.class);
-    State<StatesEnum, EventsEnum> state = mock(State.class);
-    when(state.getId()).thenReturn(StatesEnum.S1);
+    Transition<String, String> transition = mock(Transition.class);
+    State<String, String> state = mock(State.class);
+    when(state.getId()).thenReturn(StatesEnum.S1.name());
     when(transition.getTarget()).thenReturn(state);
-    StateContext<StatesEnum, EventsEnum> context = mock(StateContext.class);
-    when(context.getMessageHeader(anyString())).thenReturn(1L);
+    StateContext<String, String> context = mock(StateContext.class);
+    when(context.getMessageHeader(anyString())).thenReturn(new Solicitud());
     when(context.getTransition()).thenReturn(transition);
     assertDoesNotThrow(()->this.s1EntryAction.execute(context));
   }

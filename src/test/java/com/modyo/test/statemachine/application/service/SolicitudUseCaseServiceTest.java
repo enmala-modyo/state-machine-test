@@ -9,17 +9,18 @@ import static org.mockito.Mockito.when;
 
 import com.modyo.test.statemachine.application.port.out.CreateSolicitudPort;
 import com.modyo.test.statemachine.application.port.out.LoadSolicitudPort;
-import com.modyo.test.statemachine.config.statemachine.EventsEnum;
-import com.modyo.test.statemachine.config.statemachine.StatesEnum;
+import com.modyo.test.statemachine.application.port.out.SaveSolicitudPort;
 import com.modyo.test.statemachine.domain.model.Solicitud;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.statemachine.config.StateMachineFactory;
+import org.springframework.statemachine.recipes.persist.PersistStateMachineHandler;
 
 @SpringBootTest
 class SolicitudUseCaseServiceTest {
@@ -29,15 +30,17 @@ class SolicitudUseCaseServiceTest {
 
   @MockBean
   private LoadSolicitudPort loadSolicitudPort;
-
   @MockBean
-  private SolicitudStateChangeInterceptor solicitudStateChangeInterceptor;
+  private SaveSolicitudPort saveSolicitudPort;
+
+  @Autowired
+  private PersistStateMachineHandler stateMachineHandler;
 
   @Autowired
   private SolicitudUseCaseService solicitudUseCaseService;
 
-  @Autowired
-  private StateMachineFactory<StatesEnum, EventsEnum> stateMachineFactory;
+  @Captor
+  ArgumentCaptor<Solicitud> solicitudCaptor;
 
   @BeforeEach
   void setup() {
@@ -57,17 +60,17 @@ class SolicitudUseCaseServiceTest {
   @Test
   void testGetOne() {
     Solicitud solicitud = new Solicitud();
-    when(loadSolicitudPort.load((Long) any())).thenReturn(solicitud);
+    when(loadSolicitudPort.load(any())).thenReturn(solicitud);
     assertSame(solicitud, solicitudUseCaseService.getOne(1L));
-    verify(loadSolicitudPort).load((Long) any());
+    verify(loadSolicitudPort).load( any());
   }
 
   @Test
   void testNewSolicitud() {
     Solicitud solicitud = new Solicitud();
-    when(createSolicitudPort.create((String) any())).thenReturn(solicitud);
+    when(createSolicitudPort.create( any())).thenReturn(solicitud);
     assertSame(solicitud, solicitudUseCaseService.newSolicitud("Name"));
-    verify(createSolicitudPort).create((String) any());
+    verify(createSolicitudPort).create( any());
   }
 
 
@@ -78,8 +81,9 @@ class SolicitudUseCaseServiceTest {
     solicitud.setName("test");
     solicitud.setState("S1");
     when(loadSolicitudPort.loadAndLock(any())).thenReturn(solicitud);
-    var result = solicitudUseCaseService.processEvent(123L, "E2");
-    assertEquals(solicitud, result);
+    solicitudUseCaseService.processEvent(123L, "E2");
+    verify(saveSolicitudPort).save(solicitudCaptor.capture());
+    assertEquals("S3",solicitudCaptor.getValue().getState());
   }
 
 }
