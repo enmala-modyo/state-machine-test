@@ -46,4 +46,5 @@ stateDiagram-v2
 ```
 
 - Las solicitudes comienzan en el estado inicial al momento de crearse.
+- El estado S1 tiene asociada una acción de entrada y una de salida
 - El estado S2 es un pseudo-estado de choice, esto quiere decir que cuando una solicitud llega a ese estado inmediatamente se evalúa la condición asociada y la máquina se mueve al estado resultante (S3 o estado final)
