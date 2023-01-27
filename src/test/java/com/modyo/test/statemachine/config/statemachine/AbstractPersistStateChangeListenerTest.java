@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.modyo.test.statemachine.application.port.out.SaveSolicitudPort;
+import com.modyo.test.statemachine.application.service.LocalPersistStateChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ContextConfiguration(classes = {LocalPersistStateChangeListener.class})
 @ExtendWith(SpringExtension.class)
-class LocalPersistStateChangeListenerTest {
+class AbstractPersistStateChangeListenerTest {
 
   @MockBean
   SaveSolicitudPort savePort;
