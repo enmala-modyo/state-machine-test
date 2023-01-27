@@ -24,11 +24,10 @@ abstract class ArchitectureElement {
   static void denyDependency(String fromPackageName, String toPackageName, JavaClasses classes) {
     noClasses()
         .that()
-        .resideInAPackage(fromPackageName)
+        .resideInAPackage(matchAllClassesInPackage(fromPackageName))
         .should()
         .dependOnClassesThat()
-        .resideInAnyPackage(toPackageName)
-        .allowEmptyShould(true)
+        .resideInAnyPackage(matchAllClassesInPackage(toPackageName))
         .check(classes);
   }
 
