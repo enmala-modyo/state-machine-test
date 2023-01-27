@@ -1,8 +1,8 @@
 package com.modyo.test.statemachine.config.statemachine;
 
-import com.modyo.test.statemachine.config.statemachine.actions.S1EntryAction;
-import com.modyo.test.statemachine.config.statemachine.actions.S1ExitAction;
-import com.modyo.test.statemachine.config.statemachine.guards.S2Guard;
+import com.modyo.test.statemachine.application.service.actions.S1EntryAction;
+import com.modyo.test.statemachine.application.service.actions.S1ExitAction;
+import com.modyo.test.statemachine.application.service.guards.S2Guard;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
