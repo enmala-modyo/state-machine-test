@@ -3,7 +3,6 @@ package com.modyo.ms.commons.statemachine.components;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.action.Action;
 import org.springframework.statemachine.guard.Guard;
 import org.springframework.statemachine.recipes.support.RunnableAction;
@@ -30,11 +29,6 @@ public class StateMachineComponentsCatalog {
   }
 
   private Guard<String,String> alwaysFailsGuard() {
-    return new Guard<String, String>() {
-      @Override
-      public boolean evaluate(StateContext<String, String> context) {
-        return false;
-      }
-    };
+    return context -> false;
   }
 }

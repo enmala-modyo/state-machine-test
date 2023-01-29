@@ -1,8 +1,8 @@
 package com.modyo.test.statemachine.application.service.actions;
 
 import com.modyo.ms.commons.core.exceptions.TechnicalErrorException;
-import com.modyo.test.statemachine.application.port.out.LoadSolicitudPort;
 import com.modyo.ms.commons.statemachine.generic.AbstractAction;
+import com.modyo.test.statemachine.application.port.out.LoadSolicitudPort;
 import com.modyo.test.statemachine.config.StateMachineConfig;
 import com.modyo.test.statemachine.domain.model.Solicitud;
 import lombok.extern.slf4j.Slf4j;

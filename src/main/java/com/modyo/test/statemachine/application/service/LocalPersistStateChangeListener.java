@@ -2,8 +2,8 @@ package com.modyo.test.statemachine.application.service;
 
 import static com.modyo.test.statemachine.config.StateMachineConfig.SM_ENTITY_HEADER;
 
-import com.modyo.test.statemachine.application.port.out.SaveSolicitudPort;
 import com.modyo.ms.commons.statemachine.generic.AbstractPersistStateChangeListener;
+import com.modyo.test.statemachine.application.port.out.SaveSolicitudPort;
 import com.modyo.test.statemachine.domain.model.Solicitud;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
