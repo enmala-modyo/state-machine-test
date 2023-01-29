@@ -1,6 +1,4 @@
-package com.modyo.test.statemachine.config.statemachine;
-
-import static com.modyo.test.statemachine.config.statemachine.StateMachineConfig.SM_ENTITY_HEADER;
+package com.modyo.ms.commons.statemachine.generic;
 
 import java.lang.reflect.ParameterizedType;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +26,8 @@ public abstract class AbstractPersistStateChangeListener<T> implements PersistSt
   @Transactional(propagation = Propagation.REQUIRED)
   public void onPersist(State<String, String> state, Message<String> message,
       Transition<String, String> transition, StateMachine<String, String> stateMachine) {
-    if (message != null && message.getHeaders().containsKey(SM_ENTITY_HEADER)) {
-      T entity = message.getHeaders().get(SM_ENTITY_HEADER, typeParameterClass);
+    if (message != null && message.getHeaders().containsKey(getEntityHeaderName())) {
+      T entity = message.getHeaders().get(getEntityHeaderName(), typeParameterClass);
       if(entity!=null) {
         this.setState(entity, state.getId());
         saveEntity(entity);
@@ -37,6 +35,7 @@ public abstract class AbstractPersistStateChangeListener<T> implements PersistSt
     }
   }
 
+  protected abstract String getEntityHeaderName();
   protected abstract void saveEntity(T entity);
   protected abstract void setState(T entity, String state);
 

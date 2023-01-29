@@ -1,8 +1,8 @@
-package com.modyo.test.statemachine.config.statemachine;
+package com.modyo.test.statemachine.config;
 
-import com.modyo.test.statemachine.application.service.actions.S1EntryAction;
-import com.modyo.test.statemachine.application.service.actions.S1ExitAction;
-import com.modyo.test.statemachine.application.service.guards.S2Guard;
+import com.modyo.ms.commons.statemachine.components.StateMachineComponentsCatalog;
+import com.modyo.test.statemachine.domain.statemachine.EventsEnum;
+import com.modyo.test.statemachine.domain.statemachine.StatesEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -20,12 +20,9 @@ import org.springframework.statemachine.state.State;
 public class StateMachineConfig extends StateMachineConfigurerAdapter<String, String> {
 
   public static final String SM_ENTITY_HEADER = "solicitud";
+
   @Autowired
-  private S2Guard s2Guard;
-  @Autowired
-  private S1EntryAction s1EntryAction;
-  @Autowired
-  private S1ExitAction s1ExitAction;
+  private StateMachineComponentsCatalog componentsCatalog;
 
   @Override
   public void configure(StateMachineStateConfigurer<String, String> states) throws Exception {
@@ -35,7 +32,8 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<String, St
         .choice(StatesEnum.S2.name())
         .end(StatesEnum.SF.name())
         .state(StatesEnum.SI.name())
-        .state(StatesEnum.S1.name(), s1EntryAction, s1ExitAction)
+        .state(StatesEnum.S1.name(), componentsCatalog.getAction("s1EntryAction"),
+            componentsCatalog.getAction("s1ExitAction"))
         .state(StatesEnum.S2.name())
         .state(StatesEnum.S3.name())
         .state(StatesEnum.SF.name());
@@ -51,7 +49,7 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<String, St
         .and().withExternal()
         .source(StatesEnum.S1.name()).target(StatesEnum.S3.name()).event(EventsEnum.E2.name())
         .and().withChoice()
-        .source(StatesEnum.S2.name()).first(StatesEnum.SF.name(), s2Guard).last(StatesEnum.S3.name())
+        .source(StatesEnum.S2.name()).first(StatesEnum.SF.name(), componentsCatalog.getGuard("s2Guard")).last(StatesEnum.S3.name())
         .and().withExternal()
         .source(StatesEnum.S3.name()).target(StatesEnum.SF.name()).event(EventsEnum.E4.name());
   }

@@ -1,6 +1,6 @@
 package com.modyo.test.statemachine.adapters.persistence;
 
-import com.modyo.test.statemachine.config.statemachine.StatesEnum;
+import com.modyo.test.statemachine.domain.statemachine.StatesEnum;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.LockModeType;

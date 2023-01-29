@@ -7,12 +7,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.modyo.ms.commons.core.exceptions.TechnicalErrorException;
+import com.modyo.test.statemachine.application.port.out.LoadSolicitudPort;
 import com.modyo.test.statemachine.application.service.actions.S1EntryAction;
-import com.modyo.test.statemachine.config.statemachine.StatesEnum;
 import com.modyo.test.statemachine.domain.model.Solicitud;
+import com.modyo.test.statemachine.domain.statemachine.StatesEnum;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.state.State;
 import org.springframework.statemachine.transition.Transition;
@@ -23,6 +25,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 class S1EntryActionTest {
 
+  @MockBean
+  LoadSolicitudPort loadSolicitudPort;
   @Autowired
   private S1EntryAction s1EntryAction;
 

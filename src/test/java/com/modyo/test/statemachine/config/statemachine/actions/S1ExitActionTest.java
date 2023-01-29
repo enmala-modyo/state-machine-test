@@ -8,8 +8,8 @@ import static org.mockito.Mockito.when;
 
 import com.modyo.ms.commons.core.exceptions.TechnicalErrorException;
 import com.modyo.test.statemachine.application.service.actions.S1ExitAction;
-import com.modyo.test.statemachine.config.statemachine.StatesEnum;
 import com.modyo.test.statemachine.domain.model.Solicitud;
+import com.modyo.test.statemachine.domain.statemachine.StatesEnum;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

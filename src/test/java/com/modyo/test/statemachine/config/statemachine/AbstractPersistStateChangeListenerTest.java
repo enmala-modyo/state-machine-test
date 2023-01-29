@@ -1,6 +1,6 @@
 package com.modyo.test.statemachine.config.statemachine;
 
-import static com.modyo.test.statemachine.config.statemachine.StateMachineConfig.SM_ENTITY_HEADER;
+import static com.modyo.test.statemachine.config.StateMachineConfig.SM_ENTITY_HEADER;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

@@ -1,6 +1,6 @@
 package com.modyo.test.statemachine.adapters.persistence;
 
-import com.modyo.test.statemachine.config.statemachine.StatesEnum;
+import com.modyo.test.statemachine.domain.statemachine.StatesEnum;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
