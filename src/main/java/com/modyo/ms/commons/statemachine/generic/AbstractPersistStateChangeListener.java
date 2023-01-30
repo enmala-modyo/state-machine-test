@@ -29,7 +29,7 @@ public abstract class AbstractPersistStateChangeListener<T> implements PersistSt
     if (message != null && message.getHeaders().containsKey(getEntityHeaderName())) {
       T entity = message.getHeaders().get(getEntityHeaderName(), typeParameterClass);
       if(entity!=null) {
-        this.setState(entity, state.getId());
+        this.updateState(entity, state.getId());
         saveEntity(entity);
       }
     }
@@ -37,6 +37,6 @@ public abstract class AbstractPersistStateChangeListener<T> implements PersistSt
 
   protected abstract String getEntityHeaderName();
   protected abstract void saveEntity(T entity);
-  protected abstract void setState(T entity, String state);
+  protected abstract void updateState(T entity, String state);
 
 }

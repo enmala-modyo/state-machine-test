@@ -25,7 +25,7 @@ public class LocalPersistStateChangeListener extends AbstractPersistStateChangeL
   }
 
   @Override
-  protected void setState(Solicitud entity, String state) {
+  protected void updateState(Solicitud entity, String state) {
     entity.setState(state);
   }
 }
