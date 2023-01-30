@@ -11,7 +11,7 @@ sonarqube {
         property "sonar.projectKey", "modyo_state-machine-test"
         property "sonar.organization", "enmala"
         property "sonar.host.url", "https://sonarcloud.io"
-        property "sonar.exclusions", "**/*Config*, **/**Enum*, **/**Mapper*"
+        property "sonar.exclusions", "**/*Config*, **/enums/**, **/**Mapper*"
         property "sonar.coverage.exclusions", "**/**Application*"
         property "sonar.externalIssuesReportPaths", "trivy-report.json"
     }

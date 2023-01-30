@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 
 import com.modyo.ms.commons.core.exceptions.NotFoundException;
 import com.modyo.test.statemachine.domain.model.Solicitud;
-import com.modyo.test.statemachine.domain.statemachine.StatesEnum;
+import com.modyo.test.statemachine.domain.enums.States;
 import java.util.ArrayList;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +44,7 @@ class SolicitudPersistenceAdapterTest {
     SolicitudJpaEntity solicitudJpaEntity = new SolicitudJpaEntity();
     solicitudJpaEntity.setId(123L);
     solicitudJpaEntity.setName("Name");
-    solicitudJpaEntity.setState(StatesEnum.SI);
+    solicitudJpaEntity.setState(States.SI);
     when(solicitudJpaRepository.save(any())).thenReturn(solicitudJpaEntity);
     Solicitud solicitud = new Solicitud();
     when(solicitudMapper.toEntity(any())).thenReturn(solicitud);
@@ -58,7 +58,7 @@ class SolicitudPersistenceAdapterTest {
     SolicitudJpaEntity solicitudJpaEntity = new SolicitudJpaEntity();
     solicitudJpaEntity.setId(123L);
     solicitudJpaEntity.setName("Name");
-    solicitudJpaEntity.setState(StatesEnum.SI);
+    solicitudJpaEntity.setState(States.SI);
     when(solicitudJpaRepository.save( any())).thenReturn(solicitudJpaEntity);
     when(solicitudMapper.toEntity( any())).thenThrow(new NotFoundException());
     assertThrows(NotFoundException.class, () -> solicitudPersistenceAdapter.create("Name"));
@@ -71,7 +71,7 @@ class SolicitudPersistenceAdapterTest {
     SolicitudJpaEntity solicitudJpaEntity = new SolicitudJpaEntity();
     solicitudJpaEntity.setId(123L);
     solicitudJpaEntity.setName("Name");
-    solicitudJpaEntity.setState(StatesEnum.SI);
+    solicitudJpaEntity.setState(States.SI);
     Optional<SolicitudJpaEntity> ofResult = Optional.of(solicitudJpaEntity);
     when(solicitudJpaRepository.findById(any())).thenReturn(ofResult);
     Solicitud solicitud = new Solicitud();
@@ -86,7 +86,7 @@ class SolicitudPersistenceAdapterTest {
     SolicitudJpaEntity solicitudJpaEntity = new SolicitudJpaEntity();
     solicitudJpaEntity.setId(123L);
     solicitudJpaEntity.setName("Name");
-    solicitudJpaEntity.setState(StatesEnum.SI);
+    solicitudJpaEntity.setState(States.SI);
     Optional<SolicitudJpaEntity> ofResult = Optional.of(solicitudJpaEntity);
     when(solicitudJpaRepository.findByIdLocked( any())).thenReturn(ofResult);
     when(solicitudMapper.toEntity( any())).thenReturn(new Solicitud());
@@ -115,13 +115,13 @@ class SolicitudPersistenceAdapterTest {
     SolicitudJpaEntity solicitudJpaEntity = new SolicitudJpaEntity();
     solicitudJpaEntity.setId(123L);
     solicitudJpaEntity.setName("Name");
-    solicitudJpaEntity.setState(StatesEnum.SI);
+    solicitudJpaEntity.setState(States.SI);
     when(solicitudJpaRepository.save( any())).thenReturn(solicitudJpaEntity);
 
     SolicitudJpaEntity solicitudJpaEntity1 = new SolicitudJpaEntity();
     solicitudJpaEntity1.setId(123L);
     solicitudJpaEntity1.setName("Name");
-    solicitudJpaEntity1.setState(StatesEnum.SI);
+    solicitudJpaEntity1.setState(States.SI);
     when(solicitudMapper.toJpaEntity( any())).thenReturn(solicitudJpaEntity1);
     solicitudPersistenceAdapter.save(new Solicitud());
     verify(solicitudJpaRepository).save( any());
@@ -133,7 +133,7 @@ class SolicitudPersistenceAdapterTest {
     SolicitudJpaEntity solicitudJpaEntity = new SolicitudJpaEntity();
     solicitudJpaEntity.setId(123L);
     solicitudJpaEntity.setName("Name");
-    solicitudJpaEntity.setState(StatesEnum.SI);
+    solicitudJpaEntity.setState(States.SI);
     when(solicitudJpaRepository.save( any())).thenReturn(solicitudJpaEntity);
     when(solicitudMapper.toJpaEntity( any())).thenThrow(new NotFoundException());
     var solicitud = new Solicitud();

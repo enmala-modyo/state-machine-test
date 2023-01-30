@@ -1,8 +1,8 @@
 package com.modyo.test.statemachine.config;
 
 import com.modyo.ms.commons.statemachine.components.StateMachineComponentsCatalog;
-import com.modyo.test.statemachine.domain.statemachine.EventsEnum;
-import com.modyo.test.statemachine.domain.statemachine.StatesEnum;
+import com.modyo.test.statemachine.domain.enums.Events;
+import com.modyo.test.statemachine.domain.enums.States;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -28,30 +28,30 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<String, St
   public void configure(StateMachineStateConfigurer<String, String> states) throws Exception {
     states
         .withStates()
-        .initial(StatesEnum.SI.name())
-        .choice(StatesEnum.S2.name())
-        .end(StatesEnum.SF.name())
-        .state(StatesEnum.SI.name())
-        .state(StatesEnum.S1.name(), componentsCatalog.getAction("s1EntryAction"),
+        .initial(States.SI.name())
+        .choice(States.S2.name())
+        .end(States.SF.name())
+        .state(States.SI.name())
+        .state(States.S1.name(), componentsCatalog.getAction("s1EntryAction"),
             componentsCatalog.getAction("s1ExitAction"))
-        .state(StatesEnum.S2.name())
-        .state(StatesEnum.S3.name())
-        .state(StatesEnum.SF.name());
+        .state(States.S2.name())
+        .state(States.S3.name())
+        .state(States.SF.name());
   }
 
   @Override
   public void configure(StateMachineTransitionConfigurer<String, String> transitions) throws Exception {
     transitions
         .withExternal()
-        .source(StatesEnum.SI.name()).target(StatesEnum.S1.name()).event(EventsEnum.E0.name())
+        .source(States.SI.name()).target(States.S1.name()).event(Events.E0.name())
         .and().withExternal()
-        .source(StatesEnum.S1.name()).target(StatesEnum.S2.name()).event(EventsEnum.E1.name())
+        .source(States.S1.name()).target(States.S2.name()).event(Events.E1.name())
         .and().withExternal()
-        .source(StatesEnum.S1.name()).target(StatesEnum.S3.name()).event(EventsEnum.E2.name())
+        .source(States.S1.name()).target(States.S3.name()).event(Events.E2.name())
         .and().withChoice()
-        .source(StatesEnum.S2.name()).first(StatesEnum.SF.name(), componentsCatalog.getGuard("s2Guard")).last(StatesEnum.S3.name())
+        .source(States.S2.name()).first(States.SF.name(), componentsCatalog.getGuard("s2Guard")).last(States.S3.name())
         .and().withExternal()
-        .source(StatesEnum.S3.name()).target(StatesEnum.SF.name()).event(EventsEnum.E4.name());
+        .source(States.S3.name()).target(States.SF.name()).event(Events.E4.name());
   }
 
   @Override
