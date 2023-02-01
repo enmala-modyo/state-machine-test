@@ -29,29 +29,33 @@ La máquina implementada es la siguiente:
 Máquina de Estados
 ---
 stateDiagram-v2
-  direction LR
-  classDef pseudo fill:lightblue
-  state if_state <<choice>>
-  S1
-  note left of S1
-    on enter: A1
-  end note
-  note right of S1
-    on exit: A2
-  end note
+    direction LR
+    classDef pseudo fill:lightblue
+    state if_state1 <<choice>>
+    state if_state2 <<choice>>
+    S1
+    note left of S1
+        on enter: A1
+    end note
+    note right of S1
+        on exit: A2
+    end note
     [*] --> S1 : E0
     S1 --> S2 : E1
     S1 --> S3 : E2
-    S2 --> if_state
-    if_state --> [*] : True
-    if_state --> S3 : False
+    S2 --> if_state1
+    if_state1 --> [*] : True
+    if_state1 --> if_state2 : False
+    if_state2 --> [*] : True
+    if_state2 --> S3 : False
     S3 --> [*] : E4
     class S2 pseudo
 ```
 
 - Las solicitudes comienzan en el estado inicial al momento de crearse.
-- El estado S1 tiene asociada una acción de entrada y una de salida
-- El estado S2 es un pseudo-estado de choice, esto quiere decir que cuando una solicitud llega a ese estado inmediatamente se evalúa la condición asociada y la máquina se mueve al estado resultante (S3 o estado final)
+- El estado S1 tiene asociada una acción de entrada y una de salida.
+- El estado S2 es un pseudo-estado de choice, esto quiere decir que cuando una solicitud llega a ese estado
+inmediatamente se evalúan las condiciones asociadas y la máquina se mueve al estado resultante (S3 o estado final).
 
 ## ¿Cómo utilizar este ejemplo para integrar Spring Statemachine en mi proyecto?
 

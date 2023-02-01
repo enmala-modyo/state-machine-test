@@ -1,7 +1,7 @@
 package com.modyo.test.statemachine.config;
 
 import com.modyo.ms.commons.statemachine.components.StateMachineComponentsCatalog;
-import com.modyo.ms.commons.statemachine.generic.StateMachineCustomListener;
+import com.modyo.ms.commons.statemachine.components.StateChangeLoggerListener;
 import com.modyo.test.statemachine.domain.enums.Events;
 import com.modyo.test.statemachine.domain.enums.States;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import org.springframework.statemachine.config.builders.StateMachineTransitionCo
 public class StateMachineConfig extends StateMachineConfigurerAdapter<String, String> {
 
   public static final String SM_ENTITY_HEADER = "solicitud";
-  private final StateMachineCustomListener listener;
+  private final StateChangeLoggerListener listener;
   private final StateMachineComponentsCatalog componentsCatalog;
 
   @Override
