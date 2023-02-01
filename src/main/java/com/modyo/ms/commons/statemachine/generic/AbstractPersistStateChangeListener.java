@@ -1,6 +1,8 @@
 package com.modyo.ms.commons.statemachine.generic;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.statemachine.StateMachine;
@@ -17,8 +19,19 @@ public abstract class AbstractPersistStateChangeListener<T> implements PersistSt
   final Class<T> typeParameterClass;
 
   protected AbstractPersistStateChangeListener() {
-    typeParameterClass = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass())
-        .getActualTypeArguments()[0];
+    log.debug("Instantiating AbstractStateMachineListenerAdapter");
+    Type superclass = this.getClass().getGenericSuperclass();
+    if (!(superclass instanceof ParameterizedType)) {
+      log.error("Superclass is not a ParameterizedType");
+      throw new IllegalStateException("Superclass is not a ParameterizedType");
+    }
+
+    Type[] actualTypeArguments = ((ParameterizedType) superclass).getActualTypeArguments();
+    if (actualTypeArguments.length == 0) {
+      log.error("Actual type arguments are empty");
+      throw new IllegalStateException("Actual type arguments are empty");
+    }
+    typeParameterClass = (Class<T>) actualTypeArguments[0];
   }
 
 
