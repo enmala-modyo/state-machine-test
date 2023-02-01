@@ -1,4 +1,4 @@
-package com.modyo.test.statemachine.config.statemachine;
+package com.modyo.ms.commons.statemachine.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

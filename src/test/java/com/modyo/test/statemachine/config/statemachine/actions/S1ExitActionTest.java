@@ -8,8 +8,8 @@ import static org.mockito.Mockito.when;
 
 import com.modyo.ms.commons.core.exceptions.TechnicalErrorException;
 import com.modyo.test.statemachine.application.service.actions.S1ExitAction;
-import com.modyo.test.statemachine.config.statemachine.StatesEnum;
 import com.modyo.test.statemachine.domain.model.Solicitud;
+import com.modyo.test.statemachine.domain.enums.States;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ class S1ExitActionTest {
   void testExecute_WithContext() {
     Transition<String, String> transition = mock(Transition.class);
     State<String, String> state = mock(State.class);
-    when(state.getId()).thenReturn(StatesEnum.S1.name());
+    when(state.getId()).thenReturn(States.S1.name());
     when(transition.getSource()).thenReturn(state);
     StateContext<String, String> context = mock(StateContext.class);
     when(context.getMessageHeader(anyString())).thenReturn(new Solicitud());

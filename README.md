@@ -19,6 +19,10 @@ para impedir que otras instancias de la máquina puedan actuar sobre el registro
 Esta no es la configuración ideal, pues bloquea todas las lecturas de ese registro durante el cambio de estado,
 pero por ahora es la única forma que he encontrado de garantizar que no se ejecuten cambios simultáneos.
 
+:warning::point_right: **Se debe tener especial cuidado de reducir al mínimo el tiempo de ejecución durante la transacción
+(la transición de la máquina de estados) debido a que durante ese tiempo se bloquea una de las conexiones
+a la base de datos disponibles, lo que podría producir errores o lentitud.**
+
 La máquina implementada es la siguiente:
 ```mermaid
 ---

@@ -1,6 +1,6 @@
 package com.modyo.test.statemachine.application.service;
 
-import static com.modyo.test.statemachine.config.statemachine.StateMachineConfig.SM_ENTITY_HEADER;
+import static com.modyo.test.statemachine.config.StateMachineConfig.SM_ENTITY_HEADER;
 
 import com.modyo.test.statemachine.application.port.in.SolicitudUseCase;
 import com.modyo.test.statemachine.application.port.out.CreateSolicitudPort;
@@ -46,7 +46,7 @@ public class SolicitudUseCaseService implements SolicitudUseCase {
   }
 
   private void sendEvent(Solicitud solicitud, String event) {
-    log.info("sending evento to statemachine: {} {}", solicitud.getId(), event);
+    log.info("sending event to statemachine: {} {}", solicitud.getId(), event);
     stateMachineHandler.handleEventWithStateReactively(MessageBuilder.withPayload(event)
             .setHeader(SM_ENTITY_HEADER, solicitud)
             .build(), solicitud.getState())
