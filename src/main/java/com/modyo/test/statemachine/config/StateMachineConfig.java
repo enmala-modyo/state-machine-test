@@ -28,7 +28,7 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<String, St
     states
             .withStates()
             .initial(States.SI.name())
-            .choice(States.S2.name())
+            .junction(States.S2.name())
             .end(States.SF.name())
             .state(States.SI.name())
             .state(States.S1.name(), componentsCatalog.getAction("s1EntryAction"),
