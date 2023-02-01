@@ -2,6 +2,7 @@ package com.modyo.test.statemachine.application.service;
 
 import static com.modyo.test.statemachine.config.StateMachineConfig.SM_ENTITY_HEADER;
 
+import com.modyo.ms.commons.statemachine.utils.StateMachineUtils;
 import com.modyo.test.statemachine.application.port.in.SolicitudUseCase;
 import com.modyo.test.statemachine.application.port.out.CreateSolicitudPort;
 import com.modyo.test.statemachine.application.port.out.LoadSolicitudPort;
@@ -9,7 +10,6 @@ import com.modyo.test.statemachine.domain.model.Solicitud;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.recipes.persist.PersistStateMachineHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,16 +41,9 @@ public class SolicitudUseCaseService implements SolicitudUseCase {
   @Transactional
   @Override
   public Solicitud processEvent(Long solicitudId, String eventName) {
-    sendEvent(loadPort.loadAndLock(solicitudId), eventName);
+    var solicitud = loadPort.loadAndLock(solicitudId);
+    StateMachineUtils.sendEvent(stateMachineHandler, SM_ENTITY_HEADER, solicitud, solicitud.getState(), eventName);
     return loadPort.load(solicitudId);
-  }
-
-  private void sendEvent(Solicitud solicitud, String event) {
-    log.info("sending event to statemachine: {} {}", solicitud.getId(), event);
-    stateMachineHandler.handleEventWithStateReactively(MessageBuilder.withPayload(event)
-            .setHeader(SM_ENTITY_HEADER, solicitud)
-            .build(), solicitud.getState())
-        .subscribe();
   }
 
 }
