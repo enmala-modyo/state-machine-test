@@ -4,6 +4,7 @@ plugins {
     id 'jacoco'
     id 'org.sonarqube' version '3.5.0.2730'
     id 'org.cyclonedx.bom' version '1.7.2'
+    id "name.remal.integration-tests" version "3.0.0"
 }
 
 sonarqube {
@@ -110,9 +111,13 @@ dependencies {
 
 }
 
-test {
+tasks.withType(Test).configureEach {
     systemProperty 'file.encoding', 'utf-8'
     useJUnitPlatform()
+}
+
+testSourceSets {
+    integration
 }
 
 // slug size reduction for Heroku deployment
