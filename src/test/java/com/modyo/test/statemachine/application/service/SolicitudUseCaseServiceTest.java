@@ -81,6 +81,7 @@ class SolicitudUseCaseServiceTest {
     solicitud.setName("test");
     solicitud.setState("S1");
     when(loadSolicitudPort.loadAndLock(any())).thenReturn(solicitud);
+    when(loadSolicitudPort.load(any())).thenReturn(solicitud);
     solicitudUseCaseService.processEvent(123L, "E2");
     verify(saveSolicitudPort).save(solicitudCaptor.capture());
     assertEquals("S3",solicitudCaptor.getValue().getState());
