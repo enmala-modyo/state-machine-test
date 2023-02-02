@@ -1,4 +1,4 @@
-package com.modyo.test.statemachine.config.statemachine;
+package com.modyo.test.statemachine.application.service;
 
 import static com.modyo.test.statemachine.config.StateMachineConfig.SM_ENTITY_HEADER;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.modyo.test.statemachine.application.port.out.SaveSolicitudPort;
-import com.modyo.test.statemachine.application.service.LocalPersistStateChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,12 +20,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ContextConfiguration(classes = {LocalPersistStateChangeListener.class})
 @ExtendWith(SpringExtension.class)
-class AbstractPersistStateChangeListenerTest {
+class LocalPersistStateChangeListenerTest {
 
   @MockBean
   SaveSolicitudPort savePort;
   @Autowired
   LocalPersistStateChangeListener listener;
+
+
 
   @BeforeEach
   void setUp() {
