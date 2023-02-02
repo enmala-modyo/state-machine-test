@@ -1,7 +1,7 @@
 package com.modyo.test.statemachine.config;
 
-import com.modyo.ms.commons.statemachine.components.StateMachineComponentsCatalog;
 import com.modyo.ms.commons.statemachine.components.StateChangeLoggerListener;
+import com.modyo.ms.commons.statemachine.components.StateMachineComponentsCatalog;
 import com.modyo.test.statemachine.domain.enums.Events;
 import com.modyo.test.statemachine.domain.enums.States;
 import lombok.RequiredArgsConstructor;

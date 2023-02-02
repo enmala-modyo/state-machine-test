@@ -10,8 +10,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.modyo.ms.commons.core.exceptions.NotFoundException;
-import com.modyo.test.statemachine.domain.model.Solicitud;
 import com.modyo.test.statemachine.domain.enums.States;
+import com.modyo.test.statemachine.domain.model.Solicitud;
 import java.util.ArrayList;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;

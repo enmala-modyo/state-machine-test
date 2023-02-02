@@ -1,8 +1,8 @@
 package com.modyo.ms.commons.statemachine.components;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.statemachine.state.State;
 import org.springframework.statemachine.listener.StateMachineListenerAdapter;
+import org.springframework.statemachine.state.State;
 import org.springframework.stereotype.Component;
 
 

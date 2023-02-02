@@ -2,7 +2,6 @@ package com.modyo.ms.commons.statemachine.generic;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.statemachine.StateMachine;
