@@ -1,4 +1,4 @@
-package com.modyo.test.statemachine.config.statemachine.actions;
+package com.modyo.test.statemachine.application.service.actions;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -8,9 +8,8 @@ import static org.mockito.Mockito.when;
 
 import com.modyo.ms.commons.core.exceptions.TechnicalErrorException;
 import com.modyo.test.statemachine.application.port.out.LoadSolicitudPort;
-import com.modyo.test.statemachine.application.service.actions.S1EntryAction;
-import com.modyo.test.statemachine.domain.model.Solicitud;
 import com.modyo.test.statemachine.domain.enums.States;
+import com.modyo.test.statemachine.domain.model.Solicitud;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
