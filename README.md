@@ -44,10 +44,10 @@ stateDiagram-v2
     S1 --> S2 : E1
     S1 --> S3 : E2
     S2 --> if_state1
-    if_state1 --> [*] : True
-    if_state1 --> if_state2 : False
-    if_state2 --> [*] : True
-    if_state2 --> S3 : False
+    if_state1 --> [*] : Guard2=True
+    if_state1 --> if_state2 : Guard2=False
+    if_state2 --> [*] : Guard3=True
+    if_state2 --> S3 : Guard3=False
     S3 --> [*] : E4
     class S2 pseudo
 ```
