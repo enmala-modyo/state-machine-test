@@ -42,8 +42,11 @@ public class SolicitudUseCaseService implements SolicitudUseCase {
   @Override
   public Solicitud processEvent(Long solicitudId, String eventName) {
     var solicitud = loadPort.loadAndLock(solicitudId);
+    log.info("Sending event {} to {}({})", eventName, solicitud.getId(), solicitud.getState());
     StateMachineUtils.sendEvent(stateMachineHandler, SM_ENTITY_HEADER, solicitud, solicitud.getState(), eventName);
-    return loadPort.load(solicitudId);
+    solicitud = loadPort.load(solicitudId);
+    log.info("New state of {} {}",solicitud.getId(), solicitud.getState());
+    return solicitud;
   }
 
 }
