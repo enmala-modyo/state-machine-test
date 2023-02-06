@@ -1,12 +1,25 @@
 import http from 'k6/http';
+import { check } from 'k6';
 
+/*
 export const options = {
   stages: [
     {duration: '15s', target: 20},
     {duration: '30s', target: 10},
     {duration: '10s', target: 0},
   ],
+  thresholds: {
+    checks: ['rate>0.90']
+  }
+};*/
+export const options = {
+  vus: 50,
+  duration: '10s',
+  thresholds: {
+    checks: ['rate>0.90']
+  }
 };
+
 export default function () {
   const response = http.get('http://localhost:8080/statemachine/solicitudes');
   if (response.status === 200 && response.json().data.length > 5) {
@@ -34,7 +47,21 @@ function sendEvent(solicitud) {
   }
   console.log(JSON.stringify(solicitud) + " " + event);
   const response = http.patch('http://localhost:8080/statemachine/solicitudes/' + id + '/' + event);
-  console.log(JSON.stringify(response.json()));
+  check(response, {
+    'verify new state is expected': (r) => {
+      let verify;
+      const newState = r.json().data.state;
+      switch (state) {
+        case 'SI': verify = newState === 'S1'; break;
+        case 'S1': verify = newState === 'S3' || newState === 'SF'; break;
+        case 'S3': verify = newState === 'SF'; break;
+        default: true;
+      }
+      return verify;
+    }
+
+  })
+  console.log("changed from "+state+" to "+ JSON.stringify(response.json()));
 }
 
 const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
