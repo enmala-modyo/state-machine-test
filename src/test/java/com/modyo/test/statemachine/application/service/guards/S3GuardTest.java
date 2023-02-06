@@ -1,7 +1,7 @@
 package com.modyo.test.statemachine.application.service.guards;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 
 import com.modyo.test.statemachine.config.StateMachineConfig;
@@ -25,8 +25,8 @@ class S3GuardTest {
   }
 
   @Test
-  void testEvaluate_AllwaysTrue() {
-    assertTrue(s3Guard.evaluate(mock(StateContext.class)));
+  void testEvaluate_AllwaysReturnsFalse() {
+    assertFalse(s3Guard.evaluate(mock(StateContext.class)));
   }
 
 }

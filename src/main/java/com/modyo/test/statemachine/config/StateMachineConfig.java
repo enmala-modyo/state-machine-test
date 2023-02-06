@@ -7,20 +7,20 @@ import com.modyo.test.statemachine.domain.enums.States;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.statemachine.config.EnableStateMachine;
+import org.springframework.statemachine.config.EnableStateMachineFactory;
 import org.springframework.statemachine.config.StateMachineConfigurerAdapter;
 import org.springframework.statemachine.config.builders.StateMachineConfigurationConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineStateConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
 
 @Configuration
-@EnableStateMachine(name = "solicitudStateMachine")
+@EnableStateMachineFactory(name = "solicitudStateMachineFactory")
 @Slf4j
 @RequiredArgsConstructor
 public class StateMachineConfig extends StateMachineConfigurerAdapter<String, String> {
 
   public static final String SM_ENTITY_HEADER = "solicitud";
-  private final StateChangeLoggerListener listener;
+  private final StateChangeLoggerListener stateChangeLoggerListener;
   private final StateMachineComponentsCatalog componentsCatalog;
 
   @Override
@@ -36,8 +36,6 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<String, St
             .state(States.S2.name())
             .state(States.S3.name())
             .state(States.SF.name());
-
-
   }
 
   @Override
@@ -61,7 +59,7 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<String, St
 
   @Override
   public void configure(StateMachineConfigurationConfigurer<String, String> config) throws Exception {
-    config.withConfiguration().listener(listener);
+    config.withConfiguration().listener(stateChangeLoggerListener);
   }
 }
 
