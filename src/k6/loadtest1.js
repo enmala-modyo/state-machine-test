@@ -2,24 +2,30 @@ import http from 'k6/http';
 import { check } from 'k6';
 import { Counter } from 'k6/metrics';
 
-/*
-export const options = {
-  stages: [
-    {duration: '15s', target: 20},
-    {duration: '30s', target: 10},
-    {duration: '10s', target: 0},
-  ],
-  thresholds: {
-    checks: ['rate>0.90']
+const config = {
+  "50vus": { options: {
+      vus: 50,
+      duration: '10s',
+      thresholds: {
+        checks: ['rate>0.99']
+      }
+    }
+  },
+  "ramping": {
+    options : {
+      stages: [
+        {duration: '10s', target: 10},
+        {duration: '20s', target: 50},
+        {duration: '10s', target: 0},
+      ],
+      thresholds: {
+        checks: ['rate>0.99']
+      }
+    }
   }
-};*/
-export const options = {
-  vus: 50,
-  duration: '10s',
-  thresholds: {
-    checks: ['rate>0.99']
-  }
-};
+}
+const scenario = __ENV.TEST_SCENARIO === undefined ? "50vus" : __ENV.TEST_SCENARIO.toLowerCase();
+export const options = config[scenario].options;
 
 const eventSuccess = new Counter('event_send_success');
 const eventFails = new Counter('event_send_fails');
@@ -67,7 +73,7 @@ function sendEvent(solicitud) {
             verify = newState === 'SF';
             break;
           default:
-            true;
+            verify = false;
         }
         return verify;
       }
