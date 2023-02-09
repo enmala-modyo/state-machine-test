@@ -18,15 +18,14 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(classes = {LocalPersistStateChangeListener.class})
+@ContextConfiguration(classes = {LocalPersistStateChangeInterceptor.class})
 @ExtendWith(SpringExtension.class)
-class LocalPersistStateChangeListenerTest {
+class LocalPersistStateChangeInterceptorTest {
 
   @MockBean
   SaveSolicitudPort savePort;
   @Autowired
-  LocalPersistStateChangeListener listener;
-
+  LocalPersistStateChangeInterceptor interceptor;
 
 
   @BeforeEach
@@ -34,23 +33,23 @@ class LocalPersistStateChangeListenerTest {
   }
 
   @Test
-  void onPersist_NoMessage_DoNothing() {
-    assertDoesNotThrow(() -> listener.onPersist(null, null, null, null));
+  void preStateChange_NoMessage_DoNothing() {
+    assertDoesNotThrow(() -> interceptor.preStateChange(null, null, null, null, null));
   }
 
   @Test
-  void onPersist_HeaderNotFound_DoNothing() {
+  void preStateChange_HeaderNotFound_DoNothing() {
     Message<String> message = mock(Message.class);
     when(message.getHeaders()).thenReturn(new MessageHeaders(Map.of()));
-    assertDoesNotThrow(() -> listener.onPersist(null, message, null, null));
+    assertDoesNotThrow(() -> interceptor.preStateChange(null, message, null, null, null));
   }
 
   @Test
-  void onPersist_SolicitudNotFound_DoNothing() {
+  void preStateChange_SolicitudNotFound_DoNothing() {
     Message<String> message = mock(Message.class);
-    var headers = new HashMap<String,Object>();
-    headers.put(SM_ENTITY_HEADER,null);
+    var headers = new HashMap<String, Object>();
+    headers.put(SM_ENTITY_HEADER, null);
     when(message.getHeaders()).thenReturn(new MessageHeaders(headers));
-    assertDoesNotThrow(() -> listener.onPersist(null, message, null, null));
+    assertDoesNotThrow(() -> interceptor.preStateChange(null, message, null, null, null));
   }
 }

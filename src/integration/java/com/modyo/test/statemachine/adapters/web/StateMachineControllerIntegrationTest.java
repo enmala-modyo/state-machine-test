@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class StateMachineControllerIntegrationTest {
+class StateMachineControllerIntegrationTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -40,7 +40,7 @@ public class StateMachineControllerIntegrationTest {
 
   @Test
   @Order(1)
-  public void givenPostSolicitud_whenSendReq_thenVerifyCreated() throws Exception {
+  void givenPostSolicitud_whenSendReq_thenVerifyCreated() throws Exception {
     var expected = new Response<>(expectedDto);
     mockMvc.perform(
             post("/statemachine/solicitudes")
@@ -52,7 +52,7 @@ public class StateMachineControllerIntegrationTest {
 
   @Test
   @Order(2)
-  public void givenOneSolicitud_whenReq_thenVerifyRetrived() throws Exception {
+  void givenOneSolicitud_whenReq_thenVerifyRetrived() throws Exception {
     var expected = new Response<>(expectedDto);
     mockMvc.perform(
             get("/statemachine/solicitudes/{id}",1)
@@ -63,7 +63,7 @@ public class StateMachineControllerIntegrationTest {
 
   @Test
   @Order(3)
-  public void givenOneSolicitud_whenReqAll_thenVerifyRetrived() throws Exception {
+  void givenOneSolicitud_whenReqAll_thenVerifyRetrived() throws Exception {
     var expected = new Response<>(List.of(expectedDto));
     mockMvc.perform(
             get("/statemachine/solicitudes")
@@ -74,7 +74,7 @@ public class StateMachineControllerIntegrationTest {
 
   @Test
   @Order(4)
-  public void givenOneSolicitud_whenSendInvalidEvent_thenVerifyNothingHappened() throws Exception {
+  void givenOneSolicitud_whenSendInvalidEvent_thenVerifyNothingHappened() throws Exception {
     var expected = new Response<>(expectedDto);
     mockMvc.perform(
             patch("/statemachine/solicitudes/{id}/{event}",1,"E2")
@@ -85,7 +85,7 @@ public class StateMachineControllerIntegrationTest {
 
   @Test
   @Order(5)
-  public void givenOneSolicitud_whenSendValidEvent_thenVerifyNewState() throws Exception {
+  void givenOneSolicitud_whenSendValidEvent_thenVerifyNewState() throws Exception {
     expectedDto.setState("S1");
     var expected = new Response<>(expectedDto);
     mockMvc.perform(

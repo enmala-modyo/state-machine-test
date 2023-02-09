@@ -2,8 +2,8 @@
 
 Esta aplicación es un pequeño ejemplo del uso de Spring Statemachine con persistencia JPA.
 
-La configuración utilizada es muy simple, se utiliza la *"receta"* Persist para registrar en la BD los
-cambios de estado el que se ejecutan.
+La configuración utilizada es muy simple, se utiliza un interceptor para detectar y registrar en la BD los
+cambios de estado el que se materializan.
 
 Para la implementación de flujos simples debería ser suficiente.
 
@@ -95,3 +95,7 @@ en ambos casos:
 - **SM_ENTITY_HEADER** es una etiqueta que usas para identificar el objeto enviado dentro del mensaje.
 - **solicitud.getState()** es el estado actual de la máquina.
 
+## Pruebas de la máquina de estado
+Para verificar el correcto funcionamiento de la máquina de estados se ha incluido
+un test de integración que puede ejecutarse con `./gradlew testIntegration` y un [test de carga](src/k6/README.md)
+que permite probar el correcto funcionamiento de la máquina de estados en condiciones de alta demanda.
