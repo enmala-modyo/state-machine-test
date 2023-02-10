@@ -7,6 +7,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +21,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "solicitud")
+@Table(name = "solicitud", indexes = {@Index(columnList = "state")})
 public class SolicitudJpaEntity {
 
   @Id

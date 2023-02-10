@@ -3,7 +3,6 @@ package com.modyo.test.statemachine.application.service.actions;
 import com.modyo.ms.commons.core.exceptions.TechnicalErrorException;
 import com.modyo.ms.commons.statemachine.generic.AbstractAction;
 import com.modyo.test.statemachine.application.port.out.LoadSolicitudPort;
-import com.modyo.test.statemachine.config.StateMachineConfig;
 import com.modyo.test.statemachine.domain.model.Estado;
 import com.modyo.test.statemachine.domain.model.Evento;
 import com.modyo.test.statemachine.domain.model.Solicitud;
@@ -31,8 +30,4 @@ public class S1EntryAction extends AbstractAction<Solicitud, Estado, Evento> {
     }
   }
 
-  @Override
-  protected String getEntityHeaderName() {
-    return StateMachineConfig.SM_ENTITY_HEADER;
-  }
 }

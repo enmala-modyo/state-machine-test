@@ -1,10 +1,8 @@
 package com.modyo.test.statemachine.application.service.guards;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 
-import com.modyo.test.statemachine.config.StateMachineConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +16,6 @@ class S3GuardTest {
 
   @Autowired
   private S3Guard s3Guard;
-
-  @Test
-  void testConstructor() {
-    assertEquals(StateMachineConfig.SM_ENTITY_HEADER, (new S3Guard()).getEntityHeaderName());
-  }
 
   @Test
   void testEvaluate_AllwaysReturnsFalse() {
