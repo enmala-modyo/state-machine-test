@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.modyo.test.statemachine.domain.model.Estado;
+import com.modyo.test.statemachine.domain.model.Evento;
 import com.modyo.test.statemachine.domain.model.Solicitud;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,9 +24,9 @@ class S2GuardTest {
 
   @Test
   void testEvaluate() {
-    StateContext<String, String> context = mock(StateContext.class);
+    StateContext<Estado, Evento> context = mock(StateContext.class);
     when(context.getMessageHeader(anyString())).thenReturn(new Solicitud());
-    assertDoesNotThrow(()->this.s2Guard.evaluate(context));
+    assertDoesNotThrow(() -> this.s2Guard.evaluate(context));
   }
 }
 

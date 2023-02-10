@@ -15,12 +15,12 @@ import org.springframework.statemachine.state.ObjectState;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(classes = {StateChangeLoggerListener.class})
+@ContextConfiguration(classes = {DefaultStateChangeLoggerListener.class})
 @ExtendWith(SpringExtension.class)
-class StateChangeLoggerListenerTest {
+class DefaultStateChangeLoggerListenerTest {
 
   @Autowired
-  private StateChangeLoggerListener stateChangeLoggerListener;
+  private DefaultStateChangeLoggerListener stateChangeLoggerListener;
 
   @Test
   void testStateChanged() {

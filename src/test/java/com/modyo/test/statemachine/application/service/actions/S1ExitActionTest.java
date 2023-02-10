@@ -7,7 +7,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.modyo.ms.commons.core.exceptions.TechnicalErrorException;
-import com.modyo.test.statemachine.domain.enums.States;
+import com.modyo.test.statemachine.domain.model.Estado;
+import com.modyo.test.statemachine.domain.model.Evento;
 import com.modyo.test.statemachine.domain.model.Solicitud;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,21 +25,22 @@ class S1ExitActionTest {
 
   @Autowired
   private S1ExitAction s1ExitAction;
+
   @Test
   void testExecute_WithNoContext() {
-    StateContext<String, String> context = mock(StateContext.class);
-    assertThrows(TechnicalErrorException.class,()->this.s1ExitAction.execute(context));
+    StateContext<Estado, Evento> context = mock(StateContext.class);
+    assertThrows(TechnicalErrorException.class, () -> this.s1ExitAction.execute(context));
   }
 
   @Test
   void testExecute_WithContext() {
-    Transition<String, String> transition = mock(Transition.class);
-    State<String, String> state = mock(State.class);
-    when(state.getId()).thenReturn(States.S1.name());
+    Transition<Estado, Evento> transition = mock(Transition.class);
+    State<Estado, Evento> state = mock(State.class);
+    when(state.getId()).thenReturn(Estado.S1);
     when(transition.getSource()).thenReturn(state);
-    StateContext<String, String> context = mock(StateContext.class);
+    StateContext<Estado, Evento> context = mock(StateContext.class);
     when(context.getMessageHeader(anyString())).thenReturn(new Solicitud());
     when(context.getTransition()).thenReturn(transition);
-    assertDoesNotThrow(()->this.s1ExitAction.execute(context));
+    assertDoesNotThrow(() -> this.s1ExitAction.execute(context));
   }
 }

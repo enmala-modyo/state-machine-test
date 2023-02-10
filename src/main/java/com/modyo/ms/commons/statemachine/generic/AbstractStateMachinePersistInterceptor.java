@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
-public abstract class AbstractStateMachinePersistInterceptor<T> extends StateMachineInterceptorAdapter<String, String> {
+public abstract class AbstractStateMachinePersistInterceptor<T, S, E> extends StateMachineInterceptorAdapter<S, E> {
 
   final Class<T> typeParameterClass;
 
@@ -20,7 +20,7 @@ public abstract class AbstractStateMachinePersistInterceptor<T> extends StateMac
 
   protected abstract void saveEntity(T entity);
 
-  protected abstract void updateState(T entity, String state);
+  protected abstract void updateState(T entity, S state);
 
 
   protected AbstractStateMachinePersistInterceptor() {
@@ -41,9 +41,12 @@ public abstract class AbstractStateMachinePersistInterceptor<T> extends StateMac
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED)
-  public void preStateChange(State<String, String> state, Message<String> message,
-      Transition<String, String> transition, StateMachine<String, String> stateMachine,
-      StateMachine<String, String> rootStateMachine) {
+  public void preStateChange(
+      State<S, E> state,
+      Message<E> message,
+      Transition<S, E> transition,
+      StateMachine<S, E> stateMachine,
+      StateMachine<S, E> rootStateMachine) {
     log.info("onPersist");
     if (message != null && message.getHeaders().containsKey(getEntityHeaderName())) {
       T entity = message.getHeaders().get(getEntityHeaderName(), typeParameterClass);

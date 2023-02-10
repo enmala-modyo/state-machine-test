@@ -1,34 +1,33 @@
 package com.modyo.ms.commons.statemachine.components;
 
 import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.statemachine.action.Action;
 import org.springframework.statemachine.guard.Guard;
-import org.springframework.statemachine.recipes.support.RunnableAction;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class StateMachineComponentsCatalog {
+public class StateMachineComponentsCatalog<S, E> {
 
-  private final Map<String,Action<String, String>> actions;
-  private final Map<String, Guard<String,String>> guards;
-  public Action<String, String> getAction(String name){
-    var requiredAction = Optional.ofNullable(actions.get(name));
-    return requiredAction.orElse(doNothing());
+  private final Map<String, Action<S, E>> actions;
+  private final Map<String, Guard<S, E>> guards;
+
+  public Action<S, E> getAction(String name) {
+    return actions.getOrDefault(name, doNothing());
   }
 
-  public Guard<String, String> getGuard(String name){
-    var requiredGuard = Optional.ofNullable(guards.get(name));
-    return requiredGuard.orElse(alwaysFailsGuard());
+  public Guard<S, E> getGuard(String name) {
+    return guards.getOrDefault(name, alwaysFail());
   }
 
-  private RunnableAction doNothing() {
-    return new RunnableAction(()->{});
+  private Action<S, E> doNothing() {
+    return context -> {
+      // do nothing
+    };
   }
 
-  private Guard<String,String> alwaysFailsGuard() {
+  private Guard<S, E> alwaysFail() {
     return context -> false;
   }
 }

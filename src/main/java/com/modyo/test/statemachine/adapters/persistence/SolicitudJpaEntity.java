@@ -1,6 +1,6 @@
 package com.modyo.test.statemachine.adapters.persistence;
 
-import com.modyo.test.statemachine.domain.enums.States;
+import com.modyo.test.statemachine.domain.model.Estado;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -27,6 +27,6 @@ public class SolicitudJpaEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   @Enumerated(EnumType.STRING)
-  private States state;
+  private Estado state;
   private String name;
 }

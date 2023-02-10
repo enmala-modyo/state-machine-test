@@ -4,12 +4,15 @@ import static com.modyo.test.statemachine.config.StateMachineConfig.SM_ENTITY_HE
 
 import com.modyo.ms.commons.statemachine.generic.AbstractStateMachinePersistInterceptor;
 import com.modyo.test.statemachine.application.port.out.SaveSolicitudPort;
+import com.modyo.test.statemachine.domain.model.Estado;
+import com.modyo.test.statemachine.domain.model.Evento;
 import com.modyo.test.statemachine.domain.model.Solicitud;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LocalPersistStateChangeInterceptor extends AbstractStateMachinePersistInterceptor<Solicitud> {
+public class StateChangePersistenceInterceptor
+    extends AbstractStateMachinePersistInterceptor<Solicitud, Estado, Evento> {
 
   @Autowired
   private SaveSolicitudPort savePort;
@@ -25,7 +28,7 @@ public class LocalPersistStateChangeInterceptor extends AbstractStateMachinePers
   }
 
   @Override
-  protected void updateState(Solicitud entity, String state) {
+  protected void updateState(Solicitud entity, Estado state) {
     entity.setState(state);
   }
 }

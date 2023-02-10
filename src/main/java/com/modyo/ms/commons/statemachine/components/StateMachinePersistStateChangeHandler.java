@@ -14,29 +14,32 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Component
 @ConditionalOnBean({AbstractStateMachinePersistInterceptor.class})
-public class StateMachinePersistStateChangeHandler {
+public class StateMachinePersistStateChangeHandler<T, S, E> {
 
-  private final StateMachineFactory<String, String> stateMachineFactory;
-  private final AbstractStateMachinePersistInterceptor persistInterceptor;
+  private final StateMachineFactory<S, E> stateMachineFactory;
+  private final AbstractStateMachinePersistInterceptor<T, S, E> persistInterceptor;
 
-  public void sendEvent(Object entity, String entityId, String state, String event) {
-    Message msg = MessageBuilder.withPayload(event)
+  public void sendEvent(T entity, String entityId, S state, E event) {
+    Message<E> message = MessageBuilder
+        .withPayload(event)
         .setHeader(persistInterceptor.getEntityHeaderName(), entity)
         .build();
 
-    build(entityId, state).sendEvent(Mono.just(msg)).subscribe();
+    build(entityId, state)
+        .sendEvent(Mono.just(message))
+        .subscribe();
   }
 
-  private StateMachine<String, String> build(String entityId, String entityState) {
-    StateMachine<String, String> sm = stateMachineFactory.getStateMachine(entityId);
-    sm.stopReactively().block();
-    sm.getStateMachineAccessor()
-        .doWithAllRegions(sma -> {
-          sma.addStateMachineInterceptor(persistInterceptor);
-          sma.resetStateMachineReactively(
+  private StateMachine<S, E> build(String entityId, S entityState) {
+    StateMachine<S, E> stateMachine = stateMachineFactory.getStateMachine(entityId);
+    stateMachine.stopReactively().block();
+    stateMachine.getStateMachineAccessor()
+        .doWithAllRegions(machineAccess -> {
+          machineAccess.addStateMachineInterceptor(persistInterceptor);
+          machineAccess.resetStateMachineReactively(
               new DefaultStateMachineContext<>(entityState, null, null, null)).subscribe();
         });
-    sm.startReactively().block();
-    return sm;
+    stateMachine.startReactively().block();
+    return stateMachine;
   }
 }

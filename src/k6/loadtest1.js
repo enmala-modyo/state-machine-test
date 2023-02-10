@@ -1,9 +1,10 @@
 import http from 'k6/http';
-import { check } from 'k6';
-import { Counter } from 'k6/metrics';
+import {check} from 'k6';
+import {Counter} from 'k6/metrics';
 
 const config = {
-  "50vus": { options: {
+  "50vus": {
+    options: {
       vus: 50,
       duration: '10s',
       thresholds: {
@@ -12,7 +13,7 @@ const config = {
     }
   },
   "ramping": {
-    options : {
+    options: {
       stages: [
         {duration: '10s', target: 10},
         {duration: '20s', target: 50},
@@ -45,7 +46,7 @@ function sendEvent(solicitud) {
   let state = solicitud.state;
   let event;
   switch (state) {
-    case 'SI':
+    case 'INIT':
       event = 'E0';
       break;
     case 'S1':
@@ -57,20 +58,20 @@ function sendEvent(solicitud) {
   }
   console.log(JSON.stringify(solicitud) + " " + event);
   const response = http.patch('http://localhost:8080/statemachine/solicitudes/' + id + '/' + event);
-  if(response.status === 200) {
+  if (response.status === 200) {
     check(response, {
       'verify expected new state': (r) => {
         let verify;
         const newState = r.json().data.state;
         switch (state) {
-          case 'SI':
+          case 'INIT':
             verify = newState === 'S1';
             break;
           case 'S1':
-            verify = newState === 'S3' || newState === 'SF';
+            verify = newState === 'S3' || newState === 'END';
             break;
           case 'S3':
-            verify = newState === 'SF';
+            verify = newState === 'END';
             break;
           default:
             verify = false;
@@ -79,10 +80,10 @@ function sendEvent(solicitud) {
       }
     });
     eventSuccess.add(1);
-    console.log("changed from "+state+" to "+ JSON.stringify(response.json()));
+    console.log("changed from " + state + " to " + JSON.stringify(response.json()));
   } else {
     eventFails.add(1);
-    console.log("Error changing state for "+id+" status code: "+response.status);
+    console.log("Error changing state for " + id + " status code: " + response.status);
   }
 }
 
