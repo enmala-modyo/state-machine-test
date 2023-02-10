@@ -1,6 +1,6 @@
 package com.modyo.test.statemachine.application.service;
 
-import com.modyo.ms.commons.statemachine.components.StateChangeLoggerListener;
+import com.modyo.ms.commons.statemachine.components.DefaultStateChangeLoggerListener;
 import com.modyo.test.statemachine.domain.model.Estado;
 import com.modyo.test.statemachine.domain.model.Evento;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Primary
 @Slf4j
-public class LocalStateChangeLoggerListener extends StateChangeLoggerListener<Estado, Evento> {
+public class StateChangeLogger extends DefaultStateChangeLoggerListener<Estado, Evento> {
 
   @Override
   public void eventNotAccepted(Message<Evento> event) {
@@ -25,6 +25,5 @@ public class LocalStateChangeLoggerListener extends StateChangeLoggerListener<Es
     super.stateChanged(from, to);
     log.info("Event Accepted");
   }
-
 
 }

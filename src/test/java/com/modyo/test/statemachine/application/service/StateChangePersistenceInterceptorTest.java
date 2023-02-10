@@ -19,14 +19,14 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(classes = {LocalPersistStateChangeInterceptor.class})
+@ContextConfiguration(classes = {StateChangePersistenceInterceptor.class})
 @ExtendWith(SpringExtension.class)
-class LocalPersistStateChangeInterceptorTest {
+class StateChangePersistenceInterceptorTest {
 
   @MockBean
   SaveSolicitudPort savePort;
   @Autowired
-  LocalPersistStateChangeInterceptor interceptor;
+  StateChangePersistenceInterceptor interceptor;
 
 
   @BeforeEach

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class StateChangeLoggerListener<S, E> extends StateMachineListenerAdapter<S, E> {
+public class DefaultStateChangeLoggerListener<S, E> extends StateMachineListenerAdapter<S, E> {
 
   @Override
   public void stateChanged(State from, State to) {

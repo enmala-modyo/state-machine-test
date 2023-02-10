@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LocalPersistStateChangeInterceptor
+public class StateChangePersistenceInterceptor
     extends AbstractStateMachinePersistInterceptor<Solicitud, Estado, Evento> {
 
   @Autowired

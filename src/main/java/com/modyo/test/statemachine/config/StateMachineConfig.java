@@ -1,6 +1,6 @@
 package com.modyo.test.statemachine.config;
 
-import com.modyo.ms.commons.statemachine.components.StateChangeLoggerListener;
+import com.modyo.ms.commons.statemachine.components.DefaultStateChangeLoggerListener;
 import com.modyo.ms.commons.statemachine.components.StateMachineComponentsCatalog;
 import com.modyo.test.statemachine.domain.model.Estado;
 import com.modyo.test.statemachine.domain.model.Evento;
@@ -20,7 +20,7 @@ import org.springframework.statemachine.config.builders.StateMachineTransitionCo
 public class StateMachineConfig extends StateMachineConfigurerAdapter<Estado, Evento> {
 
   public static final String SM_ENTITY_HEADER = "solicitud";
-  private final StateChangeLoggerListener<Estado, Evento> stateChangeLoggerListener;
+  private final DefaultStateChangeLoggerListener<Estado, Evento> stateChangeLoggerListener;
   private final StateMachineComponentsCatalog<Estado, Evento> componentsCatalog;
 
   @Override
