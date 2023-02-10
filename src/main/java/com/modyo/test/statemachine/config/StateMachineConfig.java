@@ -19,7 +19,6 @@ import org.springframework.statemachine.config.builders.StateMachineTransitionCo
 @RequiredArgsConstructor
 public class StateMachineConfig extends StateMachineConfigurerAdapter<Estado, Evento> {
 
-  public static final String SM_ENTITY_HEADER = "solicitud";
   private final DefaultStateChangeLoggerListener<Estado, Evento> stateChangeLoggerListener;
   private final StateMachineComponentsCatalog<Estado, Evento> componentsCatalog;
 

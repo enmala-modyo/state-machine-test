@@ -1,6 +1,5 @@
 package com.modyo.test.statemachine.application.service;
 
-import static com.modyo.test.statemachine.config.StateMachineConfig.SM_ENTITY_HEADER;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -49,7 +48,7 @@ class StateChangePersistenceInterceptorTest {
   void preStateChange_SolicitudNotFound_DoNothing() {
     Message<Evento> message = mock(Message.class);
     var headers = new HashMap<String, Object>();
-    headers.put(SM_ENTITY_HEADER, null);
+    headers.put("header", null);
     when(message.getHeaders()).thenReturn(new MessageHeaders(headers));
     assertDoesNotThrow(() -> interceptor.preStateChange(null, message, null, null, null));
   }

@@ -1,7 +1,5 @@
 package com.modyo.test.statemachine.application.service;
 
-import static com.modyo.test.statemachine.config.StateMachineConfig.SM_ENTITY_HEADER;
-
 import com.modyo.ms.commons.statemachine.generic.AbstractStateMachinePersistInterceptor;
 import com.modyo.test.statemachine.application.port.out.SaveSolicitudPort;
 import com.modyo.test.statemachine.domain.model.Estado;
@@ -16,11 +14,6 @@ public class StateChangePersistenceInterceptor
 
   @Autowired
   private SaveSolicitudPort savePort;
-
-  @Override
-  public String getEntityHeaderName() {
-    return SM_ENTITY_HEADER;
-  }
 
   @Override
   protected void saveEntity(Solicitud entity) {

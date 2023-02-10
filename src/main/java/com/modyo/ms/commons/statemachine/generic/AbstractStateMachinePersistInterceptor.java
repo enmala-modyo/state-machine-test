@@ -16,8 +16,6 @@ public abstract class AbstractStateMachinePersistInterceptor<T, S, E> extends St
 
   final Class<T> typeParameterClass;
 
-  public abstract String getEntityHeaderName();
-
   protected abstract void saveEntity(T entity);
 
   protected abstract void updateState(T entity, S state);
@@ -37,6 +35,11 @@ public abstract class AbstractStateMachinePersistInterceptor<T, S, E> extends St
       throw new IllegalStateException("Actual type arguments are empty");
     }
     typeParameterClass = (Class<T>) actualTypeArguments[0];
+
+  }
+
+  public String getEntityHeaderName() {
+    return typeParameterClass.getName();
   }
 
   @Override

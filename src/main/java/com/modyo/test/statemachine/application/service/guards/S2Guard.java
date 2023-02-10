@@ -1,7 +1,6 @@
 package com.modyo.test.statemachine.application.service.guards;
 
 import com.modyo.ms.commons.statemachine.generic.AbstractGuard;
-import com.modyo.test.statemachine.config.StateMachineConfig;
 import com.modyo.test.statemachine.domain.model.Estado;
 import com.modyo.test.statemachine.domain.model.Evento;
 import com.modyo.test.statemachine.domain.model.Solicitud;
@@ -23,8 +22,4 @@ public class S2Guard extends AbstractGuard<Solicitud, Estado, Evento> {
     return result;
   }
 
-  @Override
-  protected String getEntityHeaderName() {
-    return StateMachineConfig.SM_ENTITY_HEADER;
-  }
 }
