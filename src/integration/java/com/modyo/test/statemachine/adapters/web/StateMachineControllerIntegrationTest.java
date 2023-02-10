@@ -35,7 +35,7 @@ class StateMachineControllerIntegrationTest {
 
   @BeforeEach
   public void setUp() {
-    expectedDto = new SolicitudDto(1L,"test","SI");
+    expectedDto = new SolicitudDto(1L, "test", "INIT");
   }
 
   @Test
@@ -55,7 +55,7 @@ class StateMachineControllerIntegrationTest {
   void givenOneSolicitud_whenReq_thenVerifyRetrived() throws Exception {
     var expected = new Response<>(expectedDto);
     mockMvc.perform(
-            get("/statemachine/solicitudes/{id}",1)
+            get("/statemachine/solicitudes/{id}", 1)
         ).andDo(print())
         .andExpect(status().isOk())
         .andExpect(content().json(objectMapper.writeValueAsString(expected)));
@@ -77,7 +77,7 @@ class StateMachineControllerIntegrationTest {
   void givenOneSolicitud_whenSendInvalidEvent_thenVerifyNothingHappened() throws Exception {
     var expected = new Response<>(expectedDto);
     mockMvc.perform(
-            patch("/statemachine/solicitudes/{id}/{event}",1,"E2")
+            patch("/statemachine/solicitudes/{id}/{event}", 1, "E2")
         ).andDo(print())
         .andExpect(status().isOk())
         .andExpect(content().json(objectMapper.writeValueAsString(expected)));
@@ -89,7 +89,7 @@ class StateMachineControllerIntegrationTest {
     expectedDto.setState("S1");
     var expected = new Response<>(expectedDto);
     mockMvc.perform(
-            patch("/statemachine/solicitudes/{id}/{event}",1,"E0")
+            patch("/statemachine/solicitudes/{id}/{event}", 1, "E0")
         ).andDo(print())
         .andExpect(status().isOk())
         .andExpect(content().json(objectMapper.writeValueAsString(expected)));

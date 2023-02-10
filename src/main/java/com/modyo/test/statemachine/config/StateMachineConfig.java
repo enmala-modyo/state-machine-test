@@ -2,8 +2,8 @@ package com.modyo.test.statemachine.config;
 
 import com.modyo.ms.commons.statemachine.components.StateChangeLoggerListener;
 import com.modyo.ms.commons.statemachine.components.StateMachineComponentsCatalog;
-import com.modyo.test.statemachine.domain.enums.Events;
-import com.modyo.test.statemachine.domain.enums.States;
+import com.modyo.test.statemachine.domain.model.Estado;
+import com.modyo.test.statemachine.domain.model.Evento;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -17,49 +17,54 @@ import org.springframework.statemachine.config.builders.StateMachineTransitionCo
 @EnableStateMachineFactory(name = "solicitudStateMachineFactory")
 @Slf4j
 @RequiredArgsConstructor
-public class StateMachineConfig extends StateMachineConfigurerAdapter<String, String> {
+public class StateMachineConfig extends StateMachineConfigurerAdapter<Estado, Evento> {
 
   public static final String SM_ENTITY_HEADER = "solicitud";
-  private final StateChangeLoggerListener stateChangeLoggerListener;
-  private final StateMachineComponentsCatalog componentsCatalog;
+  private final StateChangeLoggerListener<Estado, Evento> stateChangeLoggerListener;
+  private final StateMachineComponentsCatalog<Estado, Evento> componentsCatalog;
 
   @Override
-  public void configure(StateMachineStateConfigurer<String, String> states) throws Exception {
+  public void configure(StateMachineStateConfigurer<Estado, Evento> states) throws Exception {
     states
-            .withStates()
-            .initial(States.SI.name())
-            .junction(States.S2.name())
-            .end(States.SF.name())
-            .state(States.SI.name())
-            .state(States.S1.name(), componentsCatalog.getAction("s1EntryAction"),
-                    componentsCatalog.getAction("s1ExitAction"))
-            .state(States.S2.name())
-            .state(States.S3.name())
-            .state(States.SF.name());
+        .withStates()
+        .initial(Estado.INIT)
+        .junction(Estado.S2)
+        .end(Estado.END)
+        .state(Estado.INIT)
+        .state(
+            Estado.S1,
+            componentsCatalog.getAction("s1EntryAction"),
+            componentsCatalog.getAction("s1ExitAction")
+        )
+        .state(Estado.S2)
+        .state(Estado.S3)
+        .state(Estado.END);
   }
 
   @Override
-  public void configure(StateMachineTransitionConfigurer<String, String> transitions) throws Exception {
+  public void configure(StateMachineTransitionConfigurer<Estado, Evento> transitions) throws Exception {
     transitions
-            .withExternal()
-            .source(States.SI.name()).target(States.S1.name()).event(Events.E0.name())
-            .and().withExternal()
-            .source(States.S1.name()).target(States.S2.name()).event(Events.E1.name())
-            .and().withExternal()
-            .source(States.S1.name()).target(States.S3.name()).event(Events.E2.name())
-            .and()
-            .withJunction()
-            .source(States.S2.name())
-            .first(States.SF.name(), componentsCatalog.getGuard("s2Guard"))
-            .then(States.SF.name(), componentsCatalog.getGuard("s3Guard"))
-            .last(States.S3.name())
-            .and().withExternal()
-            .source(States.S3.name()).target(States.SF.name()).event(Events.E4.name());
+        .withExternal()
+        .source(Estado.INIT).target(Estado.S1).event(Evento.E0)
+        .and().withExternal()
+        .source(Estado.S1).target(Estado.S2).event(Evento.E1)
+        .and().withExternal()
+        .source(Estado.S1).target(Estado.S3).event(Evento.E2)
+        .and()
+        .withJunction()
+        .source(Estado.S2)
+        .first(Estado.END, componentsCatalog.getGuard("s2Guard"))
+        .then(Estado.END, componentsCatalog.getGuard("s3Guard"))
+        .last(Estado.S3)
+        .and().withExternal()
+        .source(Estado.S3).target(Estado.END).event(Evento.E4);
   }
 
   @Override
-  public void configure(StateMachineConfigurationConfigurer<String, String> config) throws Exception {
-    config.withConfiguration().listener(stateChangeLoggerListener);
+  public void configure(StateMachineConfigurationConfigurer<Estado, Evento> config) throws Exception {
+    config
+        .withConfiguration()
+        .listener(stateChangeLoggerListener);
   }
 }
 

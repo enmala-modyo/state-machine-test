@@ -4,7 +4,7 @@ import com.modyo.ms.commons.core.exceptions.NotFoundException;
 import com.modyo.test.statemachine.application.port.out.CreateSolicitudPort;
 import com.modyo.test.statemachine.application.port.out.LoadSolicitudPort;
 import com.modyo.test.statemachine.application.port.out.SaveSolicitudPort;
-import com.modyo.test.statemachine.domain.enums.States;
+import com.modyo.test.statemachine.domain.model.Estado;
 import com.modyo.test.statemachine.domain.model.Solicitud;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,7 +21,7 @@ public class SolicitudPersistenceAdapter implements LoadSolicitudPort, CreateSol
 
   @Override
   public Solicitud create(String name) {
-    var jpaEntity = SolicitudJpaEntity.builder().name(name).state(States.SI).build();
+    var jpaEntity = SolicitudJpaEntity.builder().name(name).state(Estado.INIT).build();
     return mapper.toEntity(repository.save(jpaEntity));
   }
 
@@ -38,8 +38,8 @@ public class SolicitudPersistenceAdapter implements LoadSolicitudPort, CreateSol
   }
 
   @Override
-  public List<Solicitud> loadAllActive(){
-    var allActive = repository.findAllByStateNot(States.SF);
+  public List<Solicitud> loadAllActive() {
+    var allActive = repository.findAllByStateNot(Estado.END);
     return allActive.stream().map(mapper::toEntity).collect(Collectors.toList());
   }
 

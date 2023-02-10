@@ -1,6 +1,6 @@
 package com.modyo.test.statemachine.adapters.persistence;
 
-import com.modyo.test.statemachine.domain.enums.States;
+import com.modyo.test.statemachine.domain.model.Estado;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.LockModeType;
@@ -8,9 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
-public interface SolicitudJpaRepository extends JpaRepository<SolicitudJpaEntity,Long> {
+public interface SolicitudJpaRepository extends JpaRepository<SolicitudJpaEntity, Long> {
 
-  List<SolicitudJpaEntity> findAllByStateNot(States state);
+  List<SolicitudJpaEntity> findAllByStateNot(Estado state);
 
 
   @Lock(LockModeType.PESSIMISTIC_WRITE)

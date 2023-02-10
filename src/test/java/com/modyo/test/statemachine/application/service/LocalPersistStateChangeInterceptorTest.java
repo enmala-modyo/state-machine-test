@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.modyo.test.statemachine.application.port.out.SaveSolicitudPort;
+import com.modyo.test.statemachine.domain.model.Evento;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,14 +40,14 @@ class LocalPersistStateChangeInterceptorTest {
 
   @Test
   void preStateChange_HeaderNotFound_DoNothing() {
-    Message<String> message = mock(Message.class);
+    Message<Evento> message = mock(Message.class);
     when(message.getHeaders()).thenReturn(new MessageHeaders(Map.of()));
     assertDoesNotThrow(() -> interceptor.preStateChange(null, message, null, null, null));
   }
 
   @Test
   void preStateChange_SolicitudNotFound_DoNothing() {
-    Message<String> message = mock(Message.class);
+    Message<Evento> message = mock(Message.class);
     var headers = new HashMap<String, Object>();
     headers.put(SM_ENTITY_HEADER, null);
     when(message.getHeaders()).thenReturn(new MessageHeaders(headers));

@@ -12,6 +12,7 @@ import com.modyo.ms.commons.statemachine.components.StateMachinePersistStateChan
 import com.modyo.test.statemachine.application.port.out.CreateSolicitudPort;
 import com.modyo.test.statemachine.application.port.out.LoadSolicitudPort;
 import com.modyo.test.statemachine.application.port.out.SaveSolicitudPort;
+import com.modyo.test.statemachine.domain.model.Estado;
 import com.modyo.test.statemachine.domain.model.Solicitud;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,15 +64,15 @@ class SolicitudUseCaseServiceTest {
     Solicitud solicitud = new Solicitud();
     when(loadSolicitudPort.load(any())).thenReturn(solicitud);
     assertSame(solicitud, solicitudUseCaseService.getOne(1L));
-    verify(loadSolicitudPort).load( any());
+    verify(loadSolicitudPort).load(any());
   }
 
   @Test
   void testNewSolicitud() {
     Solicitud solicitud = new Solicitud();
-    when(createSolicitudPort.create( any())).thenReturn(solicitud);
+    when(createSolicitudPort.create(any())).thenReturn(solicitud);
     assertSame(solicitud, solicitudUseCaseService.newSolicitud("Name"));
-    verify(createSolicitudPort).create( any());
+    verify(createSolicitudPort).create(any());
   }
 
 
@@ -80,12 +81,12 @@ class SolicitudUseCaseServiceTest {
     Solicitud solicitud = new Solicitud();
     solicitud.setId(123L);
     solicitud.setName("test");
-    solicitud.setState("S1");
+    solicitud.setState(Estado.S1);
     when(loadSolicitudPort.loadAndLock(any())).thenReturn(solicitud);
     when(loadSolicitudPort.load(any())).thenReturn(solicitud);
     solicitudUseCaseService.processEvent(123L, "E2");
     verify(saveSolicitudPort).save(solicitudCaptor.capture());
-    assertEquals("S3",solicitudCaptor.getValue().getState());
+    assertEquals(Estado.S3, solicitudCaptor.getValue().getState());
   }
 
   @Test
@@ -93,7 +94,7 @@ class SolicitudUseCaseServiceTest {
     Solicitud solicitud = new Solicitud();
     solicitud.setId(123L);
     solicitud.setName("test");
-    solicitud.setState("S1");
+    solicitud.setState(Estado.S1);
     when(loadSolicitudPort.loadAndLock(any())).thenReturn(solicitud);
     when(loadSolicitudPort.load(any())).thenReturn(solicitud);
     solicitudUseCaseService.processEvent(123L, "E0");

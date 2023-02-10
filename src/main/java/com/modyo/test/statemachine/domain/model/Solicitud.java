@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Solicitud {
+
   private Long id;
-  private String state;
+  private Estado state;
   private String name;
 }

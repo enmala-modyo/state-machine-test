@@ -4,6 +4,8 @@ import com.modyo.ms.commons.statemachine.components.StateMachinePersistStateChan
 import com.modyo.test.statemachine.application.port.in.SolicitudUseCase;
 import com.modyo.test.statemachine.application.port.out.CreateSolicitudPort;
 import com.modyo.test.statemachine.application.port.out.LoadSolicitudPort;
+import com.modyo.test.statemachine.domain.model.Estado;
+import com.modyo.test.statemachine.domain.model.Evento;
 import com.modyo.test.statemachine.domain.model.Solicitud;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class SolicitudUseCaseService implements SolicitudUseCase {
 
-  private final StateMachinePersistStateChangeHandler stateMachineHandler;
+  private final StateMachinePersistStateChangeHandler<Solicitud, Estado, Evento> stateMachineHandler;
   private final LoadSolicitudPort loadPort;
   private final CreateSolicitudPort createPort;
 
@@ -39,10 +41,14 @@ public class SolicitudUseCaseService implements SolicitudUseCase {
   @Override
   public Solicitud processEvent(Long solicitudId, String eventName) {
     var solicitud = loadPort.loadAndLock(solicitudId);
+
     log.info("Sending event {} to {}({})", eventName, solicitud.getId(), solicitud.getState());
-    stateMachineHandler.sendEvent(solicitud, solicitudId.toString(), solicitud.getState(), eventName);
+    Evento event = Evento.of(eventName);
+    stateMachineHandler.sendEvent(solicitud, solicitudId.toString(), solicitud.getState(), event);
+
     solicitud = loadPort.load(solicitudId);
-    log.info("New state of {} {}",solicitud.getId(), solicitud.getState());
+    log.info("New state of {} {}", solicitud.getId(), solicitud.getState());
+
     return solicitud;
   }
 
