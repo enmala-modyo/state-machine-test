@@ -10,12 +10,12 @@ import org.springframework.statemachine.StateContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(classes = {S3Guard.class})
+@ContextConfiguration(classes = {AlwaysFalseGuard.class})
 @ExtendWith(SpringExtension.class)
-class S3GuardTest {
+class AlwaysFalseGuardTest {
 
   @Autowired
-  private S3Guard s3Guard;
+  private AlwaysFalseGuard s3Guard;
 
   @Test
   void testEvaluate_AllwaysReturnsFalse() {

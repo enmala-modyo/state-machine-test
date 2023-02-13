@@ -52,8 +52,8 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<Estado, Ev
         .and()
         .withJunction()
         .source(Estado.S2)
-        .first(Estado.END, componentsCatalog.getGuard("s2Guard"))
-        .then(Estado.END, componentsCatalog.getGuard("s3Guard"))
+        .first(Estado.END, componentsCatalog.getGuard("evaluateExternalConditionGuard"))
+        .then(Estado.END, componentsCatalog.getGuard("alwaysFalseGuard"))
         .last(Estado.S3)
         .and().withExternal()
         .source(Estado.S3).target(Estado.END).event(Evento.E4);
