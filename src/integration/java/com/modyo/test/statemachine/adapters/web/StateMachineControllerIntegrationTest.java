@@ -1,21 +1,34 @@
 package com.modyo.test.statemachine.adapters.web;
 
+import static org.hamcrest.Matchers.is;
+import static org.mockserver.integration.ClientAndServer.startClientAndServer;
+import static org.mockserver.model.HttpRequest.request;
+import static org.mockserver.model.HttpResponse.response;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modyo.test.statemachine.adapters.web.dto.Response;
 import com.modyo.test.statemachine.adapters.web.dto.SolicitudDto;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.mockserver.client.MockServerClient;
+import org.mockserver.integration.ClientAndServer;
+import org.mockserver.matchers.Times;
+import org.mockserver.model.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,11 +40,23 @@ import org.springframework.test.web.servlet.MockMvc;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class StateMachineControllerIntegrationTest {
 
+  public static final String URL_SOLICITUDES_ID_EVENT = "/statemachine/solicitudes/{id}/{event}";
+  private static ClientAndServer mockServer;
   @Autowired
   private MockMvc mockMvc;
 
   SolicitudDto expectedDto;
   ObjectMapper objectMapper = new ObjectMapper();
+
+  @BeforeAll
+  public static void startMockServer() {
+    mockServer = startClientAndServer(1080);
+  }
+
+  @AfterAll
+  public static void stopMockServer() {
+    mockServer.stop();
+  }
 
   @BeforeEach
   public void setUp() {
@@ -77,7 +102,7 @@ class StateMachineControllerIntegrationTest {
   void givenOneSolicitud_whenSendInvalidEvent_thenVerifyNothingHappened() throws Exception {
     var expected = new Response<>(expectedDto);
     mockMvc.perform(
-            patch("/statemachine/solicitudes/{id}/{event}", 1, "E2")
+            patch(URL_SOLICITUDES_ID_EVENT, 1, "E2")
         ).andDo(print())
         .andExpect(status().isOk())
         .andExpect(content().json(objectMapper.writeValueAsString(expected)));
@@ -89,9 +114,37 @@ class StateMachineControllerIntegrationTest {
     expectedDto.setState("S1");
     var expected = new Response<>(expectedDto);
     mockMvc.perform(
-            patch("/statemachine/solicitudes/{id}/{event}", 1, "E0")
+            patch(URL_SOLICITUDES_ID_EVENT, 1, "E0")
         ).andDo(print())
         .andExpect(status().isOk())
         .andExpect(content().json(objectMapper.writeValueAsString(expected)));
+  }
+
+  @Test
+  @Order(6)
+  void givenOneSolicitud_whenStateIsS0AndSendE1EventAndExternalAsnwerNo_thenVerifyNewState() throws Exception {
+    createExpectationForYesNoApi();
+    var expectedState = "S3";
+    mockMvc.perform(
+            patch(URL_SOLICITUDES_ID_EVENT, 1, "E1")
+        ).andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.data.state", is(expectedState)));
+  }
+
+  private void createExpectationForYesNoApi() throws IOException {
+    InputStream is = this.getClass().getResourceAsStream("/responses/no.json");
+    String responseBody = new String(is.readAllBytes());
+    new MockServerClient("127.0.0.1", 1080)
+        .when(
+            request()
+                .withMethod("GET")
+                .withPath("/yesno/api/"), Times.exactly(1)
+        ).respond(
+            response()
+                .withStatusCode(200)
+                .withContentType(MediaType.APPLICATION_JSON)
+                .withBody(responseBody)
+        );
   }
 }
