@@ -13,9 +13,9 @@ public class YesNoRestAdapter implements LoadRandomAnswerPort {
   public Boolean getAnswer() {
     boolean answer;
     try{
-      var response = client.getResponse();
-      if(response.getBody()!=null){
-        answer = "yes".equals(response.getBody().getAnswer());
+      var response = client.getResponse().getBody();
+      if(response!=null){
+        answer = "yes".equals(response.getAnswer());
       } else {
         answer = false;
       }
