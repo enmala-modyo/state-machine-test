@@ -32,6 +32,7 @@ import org.mockserver.model.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 
@@ -122,8 +123,8 @@ class StateMachineControllerIntegrationTest {
 
   @Test
   @Order(6)
-  void givenOneSolicitud_whenStateIsS0AndSendE1EventAndExternalAsnwerNo_thenVerifyNewState() throws Exception {
-    createExpectationForYesNoApi();
+  void givenOneSolicitudInStateS1_whenSendE1EventAndExternalAsnwerNo_thenVerifyNewStateIsS3() throws Exception {
+    createExpectationForYesNoApiNo();
     var expectedState = "S3";
     mockMvc.perform(
             patch(URL_SOLICITUDES_ID_EVENT, 1, "E1")
@@ -132,8 +133,37 @@ class StateMachineControllerIntegrationTest {
         .andExpect(jsonPath("$.data.state", is(expectedState)));
   }
 
-  private void createExpectationForYesNoApi() throws IOException {
+  @Test
+  @Order(7)
+  @Sql(statements = {"insert into solicitud values(null,'test','S1')"})
+  void givenOneSolicitudInStateS1_whenSendE1EventAndExternalAsnwerYes_thenVerifyNewStateIsEnd() throws Exception {
+    createExpectationForYesNoApiYes();
+    var expectedState = "END";
+    mockMvc.perform(
+            patch(URL_SOLICITUDES_ID_EVENT, 2, "E1")
+        ).andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.data.state", is(expectedState)));
+  }
+
+  private void createExpectationForYesNoApiNo() throws IOException {
     InputStream is = this.getClass().getResourceAsStream("/responses/no.json");
+    String responseBody = new String(is.readAllBytes());
+    new MockServerClient("127.0.0.1", 1080)
+        .when(
+            request()
+                .withMethod("GET")
+                .withPath("/yesno/api/"), Times.exactly(1)
+        ).respond(
+            response()
+                .withStatusCode(200)
+                .withContentType(MediaType.APPLICATION_JSON)
+                .withBody(responseBody)
+        );
+  }
+
+  private void createExpectationForYesNoApiYes() throws IOException {
+    InputStream is = this.getClass().getResourceAsStream("/responses/yes.json");
     String responseBody = new String(is.readAllBytes());
     new MockServerClient("127.0.0.1", 1080)
         .when(
