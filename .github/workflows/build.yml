@@ -112,4 +112,12 @@ jobs:
         with:
           gradle-version: 6.9
           arguments: build jacocoTestReport sonar --info
+      - name: Run integration test
+        uses: gradle/gradle-build-action@v2
+        env:
+          GITHUB_USERNAME: ${{ secrets.CI_GITHUB_USER }}
+          GITHUB_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
+        with:
+          gradle-version: 6.9
+          arguments: testIntegration --info
 
