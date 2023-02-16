@@ -1,30 +1,25 @@
 package com.modyo.test.statemachine.application.service;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 
 import com.modyo.test.statemachine.application.port.out.SaveSolicitudPort;
-import com.modyo.test.statemachine.domain.model.Evento;
-import java.util.HashMap;
-import java.util.Map;
+import com.modyo.test.statemachine.domain.model.Estado;
+import com.modyo.test.statemachine.domain.model.Solicitud;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@ContextConfiguration(classes = {StateChangePersistenceInterceptor.class})
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class StateChangePersistenceInterceptorTest {
 
-  @MockBean
+  @Mock
   SaveSolicitudPort savePort;
-  @Autowired
+  @InjectMocks
   StateChangePersistenceInterceptor interceptor;
 
 
@@ -33,23 +28,18 @@ class StateChangePersistenceInterceptorTest {
   }
 
   @Test
-  void preStateChange_NoMessage_DoNothing() {
-    assertDoesNotThrow(() -> interceptor.preStateChange(null, null, null, null, null));
+  void saveEntityTest(){
+    var solicitud = new Solicitud(1L, Estado.S1,"foo");
+    assertDoesNotThrow(()->interceptor.saveEntity(solicitud));
+    verify(savePort).save(solicitud);
   }
 
   @Test
-  void preStateChange_HeaderNotFound_DoNothing() {
-    Message<Evento> message = mock(Message.class);
-    when(message.getHeaders()).thenReturn(new MessageHeaders(Map.of()));
-    assertDoesNotThrow(() -> interceptor.preStateChange(null, message, null, null, null));
+  void updateStateTest(){
+    var solicitud = new Solicitud(1L, Estado.S1,"foo");
+    interceptor.updateState(solicitud,Estado.S3);
+    assertEquals(Estado.S3,solicitud.getState());
   }
 
-  @Test
-  void preStateChange_SolicitudNotFound_DoNothing() {
-    Message<Evento> message = mock(Message.class);
-    var headers = new HashMap<String, Object>();
-    headers.put("header", null);
-    when(message.getHeaders()).thenReturn(new MessageHeaders(headers));
-    assertDoesNotThrow(() -> interceptor.preStateChange(null, message, null, null, null));
-  }
+
 }

@@ -11,20 +11,14 @@ import com.modyo.test.statemachine.domain.model.Estado;
 import com.modyo.test.statemachine.domain.model.Evento;
 import com.modyo.test.statemachine.domain.model.Solicitud;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.state.State;
 import org.springframework.statemachine.transition.Transition;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(classes = {S1ExitAction.class})
-@ExtendWith(SpringExtension.class)
 class S1ExitActionTest {
 
-  @Autowired
-  private S1ExitAction s1ExitAction;
+
+  private final S1ExitAction s1ExitAction = new S1ExitAction();
 
   @Test
   void testExecute_WithNoContext() {

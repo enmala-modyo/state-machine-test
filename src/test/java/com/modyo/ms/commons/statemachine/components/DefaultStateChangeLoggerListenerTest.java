@@ -9,18 +9,11 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.statemachine.state.ObjectState;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(classes = {DefaultStateChangeLoggerListener.class})
-@ExtendWith(SpringExtension.class)
 class DefaultStateChangeLoggerListenerTest {
 
-  @Autowired
-  private DefaultStateChangeLoggerListener stateChangeLoggerListener;
+  private final DefaultStateChangeLoggerListener stateChangeLoggerListener = new DefaultStateChangeLoggerListener();
 
   @Test
   void testStateChanged() {

@@ -4,39 +4,29 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 
-import java.util.Map;
+import java.util.HashMap;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.action.Action;
 import org.springframework.statemachine.guard.Guard;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(classes = {StateMachineComponentsCatalog.class})
-@ExtendWith(SpringExtension.class)
 class StateMachineComponentsCatalogTest {
 
-  @MockBean
-  private Action<String, String> action;
+  private final HashMap<String, Action<String, String>> actions = new HashMap<>();
 
-  @MockBean
-  private Guard<String, String> guard;
+  private final HashMap<String, Guard<String, String>> guards = new HashMap<>();
 
-  @Autowired
-  private Map<String, Action<String, String>> actions;
+  private final StateMachineComponentsCatalog stateMachineComponentsCatalog = new StateMachineComponentsCatalog(actions,guards);
 
-  @Autowired
-  private Map<String, Guard<String, String>> guards;
+  @BeforeEach
+  void setUp() {
 
-  @Autowired
-  private StateMachineComponentsCatalog stateMachineComponentsCatalog;
+  }
 
   @Test
   void testGetAction_NotFound_DoNothing() {
-    assertDoesNotThrow(()->stateMachineComponentsCatalog.getAction("Name").execute(mock(StateContext.class)));
+    assertDoesNotThrow(() -> stateMachineComponentsCatalog.getAction("Name").execute(mock(StateContext.class)));
   }
 
   @Test
