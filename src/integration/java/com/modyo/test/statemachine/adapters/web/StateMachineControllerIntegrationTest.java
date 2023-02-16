@@ -25,7 +25,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.matchers.Times;
 import org.mockserver.model.MediaType;
@@ -149,7 +148,7 @@ class StateMachineControllerIntegrationTest {
   private void createExpectationForYesNoApiNo() throws IOException {
     InputStream is = this.getClass().getResourceAsStream("/responses/no.json");
     String responseBody = new String(is.readAllBytes());
-    new MockServerClient("127.0.0.1", 1080)
+    mockServer
         .when(
             request()
                 .withMethod("GET")
@@ -165,7 +164,7 @@ class StateMachineControllerIntegrationTest {
   private void createExpectationForYesNoApiYes() throws IOException {
     InputStream is = this.getClass().getResourceAsStream("/responses/yes.json");
     String responseBody = new String(is.readAllBytes());
-    new MockServerClient("127.0.0.1", 1080)
+    mockServer
         .when(
             request()
                 .withMethod("GET")
