@@ -1,119 +1,98 @@
 package com.modyo.test.statemachine.adapters.web;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.modyo.ms.commons.core.exceptions.NotFoundException;
 import com.modyo.test.statemachine.adapters.web.dto.SolicitudDto;
 import com.modyo.test.statemachine.adapters.web.dto.SolicitudDtoMapper;
 import com.modyo.test.statemachine.application.port.in.SolicitudUseCase;
 import com.modyo.test.statemachine.domain.model.Solicitud;
-import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@ContextConfiguration(classes = {StateMachineController.class})
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class StateMachineControllerTest {
 
-  @MockBean
+  @Mock
   private SolicitudDtoMapper solicitudDtoMapper;
 
-  @MockBean
+  @Mock
   private SolicitudUseCase solicitudUseCase;
 
-  @Autowired
+  @InjectMocks
   private StateMachineController stateMachineController;
 
-  @Test
-  void testCreateSolicitud() throws Exception {
-    when(solicitudUseCase.newSolicitud((String) any())).thenReturn(new Solicitud());
-    when(solicitudDtoMapper.toDto((Solicitud) any())).thenReturn(new SolicitudDto());
-    MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(
-            "/statemachine/solicitudes")
-        .param("name", "foo");
-    MockMvcBuilders.standaloneSetup(stateMachineController)
-        .build()
-        .perform(requestBuilder)
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .andExpect(MockMvcResultMatchers.content()
-            .string("{\"data\":{\"id\":null,\"name\":null,\"state\":null}}"));
+  private final SolicitudDto solicitudDto = new SolicitudDto(1L, "foo", "INIT");
+
+  @BeforeEach
+  void setUp() {
+    lenient().when(solicitudDtoMapper.toDto(any())).thenReturn(solicitudDto);
   }
 
   @Test
-  void testGetSolicitud() throws Exception {
-    when(solicitudUseCase.getOne((Long) any())).thenReturn(new Solicitud());
-    when(solicitudDtoMapper.toDto((Solicitud) any())).thenReturn(new SolicitudDto());
-    MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/statemachine/solicitudes/{idSolicitud}",
-        1L);
-    MockMvcBuilders.standaloneSetup(stateMachineController)
-        .build()
-        .perform(requestBuilder)
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .andExpect(MockMvcResultMatchers.content().string("{\"data\":{\"id\":null,\"name\":null,\"state\":null}}"));
+  void testCreateSolicitud() {
+
+    when(solicitudUseCase.newSolicitud(any())).thenReturn(new Solicitud());
+
+    var responseEntity = stateMachineController.createSolicitud("foo");
+
+    assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
+    assertEquals(solicitudDto, responseEntity.getBody().getData());
+    verify(solicitudUseCase).newSolicitud("foo");
   }
 
   @Test
-  void testGetSolicitud2() throws Exception {
-    when(solicitudUseCase.getAll()).thenReturn(new ArrayList<>());
-    when(solicitudUseCase.getOne((Long) any())).thenReturn(new Solicitud());
-    when(solicitudDtoMapper.toDto((Solicitud) any())).thenReturn(new SolicitudDto());
-    MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/statemachine/solicitudes/{idSolicitud}",
-        "", "Uri Variables");
-    MockMvcBuilders.standaloneSetup(stateMachineController)
-        .build()
-        .perform(requestBuilder)
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .andExpect(MockMvcResultMatchers.content().string("{\"data\":[]}"));
+  void testGetOneSolicitud() {
+    when(solicitudUseCase.getOne(any())).thenReturn(new Solicitud());
+
+    var responseEntity = stateMachineController.getSolicitud(1L);
+
+    assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
+    assertEquals(solicitudDto, responseEntity.getBody().getData());
+    verify(solicitudUseCase).getOne(1L);
   }
 
   @Test
-  void testGetSolicitudes() throws Exception {
-    when(solicitudUseCase.getAll()).thenReturn(new ArrayList<>());
-    MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/statemachine/solicitudes");
-    MockMvcBuilders.standaloneSetup(stateMachineController)
-        .build()
-        .perform(requestBuilder)
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .andExpect(MockMvcResultMatchers.content().string("{\"data\":[]}"));
+  void testGetOneSolicitudNotFound() {
+    when(solicitudUseCase.getOne(any())).thenThrow(new NotFoundException());
+
+    assertThrows(NotFoundException.class, () -> stateMachineController.getSolicitud(1L));
   }
 
   @Test
-  void testGetSolicitudes2() throws Exception {
-    when(solicitudUseCase.getAll()).thenReturn(new ArrayList<>());
-    MockHttpServletRequestBuilder getResult = MockMvcRequestBuilders.get("/statemachine/solicitudes");
-    getResult.characterEncoding("Encoding");
-    MockMvcBuilders.standaloneSetup(stateMachineController)
-        .build()
-        .perform(getResult)
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .andExpect(MockMvcResultMatchers.content().string("{\"data\":[]}"));
+  void testGetAllSolicitud() {
+    when(solicitudUseCase.getAll()).thenReturn(List.of(new Solicitud(), new Solicitud()));
+
+    var responseEntity = stateMachineController.getSolicitudes();
+
+    assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
+    assertEquals(2, responseEntity.getBody().getData().size());
+    assertEquals(solicitudDto, responseEntity.getBody().getData().get(0));
+    verify(solicitudUseCase).getAll();
+    verify(solicitudDtoMapper, times(2)).toDto(any());
   }
 
   @Test
-  void testUpdateSolicitud() throws Exception {
-    when(solicitudUseCase.processEvent((Long) any(), (String) any())).thenReturn(new Solicitud());
-    when(solicitudDtoMapper.toDto((Solicitud) any())).thenReturn(new SolicitudDto());
-    MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-        .patch("/statemachine/solicitudes/{idSolicitud}/{event}", 1L, "Event");
-    MockMvcBuilders.standaloneSetup(stateMachineController)
-        .build()
-        .perform(requestBuilder)
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .andExpect(MockMvcResultMatchers.content().string("{\"data\":{\"id\":null,\"name\":null,\"state\":null}}"));
+  void testUpdateSolicitud() {
+    when(solicitudUseCase.processEvent(any(), any())).thenReturn(new Solicitud());
+
+    var responseEntity = stateMachineController.updateSolicitud(1L, "E1");
+
+    assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
+    assertEquals(solicitudDto, responseEntity.getBody().getData());
+    verify(solicitudUseCase).processEvent(1L, "E1");
   }
 }
 

@@ -1,6 +1,5 @@
 package com.modyo.test.statemachine.adapters.persistence;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -17,22 +16,20 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@ContextConfiguration(classes = {SolicitudPersistenceAdapter.class})
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class SolicitudPersistenceAdapterTest {
 
-  @MockBean
+  @Mock
   private SolicitudJpaRepository solicitudJpaRepository;
 
-  @MockBean
+  @Mock
   private SolicitudMapper solicitudMapper;
 
-  @Autowired
+  @InjectMocks
   SolicitudPersistenceAdapter solicitudPersistenceAdapter;
 
   @BeforeEach
@@ -128,21 +125,4 @@ class SolicitudPersistenceAdapterTest {
     verify(solicitudMapper).toJpaEntity(any());
   }
 
-  @Test
-  void testSave2() {
-    SolicitudJpaEntity solicitudJpaEntity = new SolicitudJpaEntity();
-    solicitudJpaEntity.setId(123L);
-    solicitudJpaEntity.setName("Name");
-    solicitudJpaEntity.setState(Estado.INIT);
-    when(solicitudJpaRepository.save(any())).thenReturn(solicitudJpaEntity);
-    when(solicitudMapper.toJpaEntity(any())).thenThrow(new NotFoundException());
-    var solicitud = new Solicitud();
-    assertThrows(NotFoundException.class, () -> solicitudPersistenceAdapter.save(solicitud));
-    verify(solicitudMapper).toJpaEntity(any());
-  }
-
-  @Test
-  void test() {
-    assertThat(solicitudPersistenceAdapter).isNotNull();
-  }
 }

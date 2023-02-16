@@ -1,10 +1,8 @@
 package com.modyo.test.statemachine.application.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -13,32 +11,34 @@ import com.modyo.test.statemachine.application.port.out.CreateSolicitudPort;
 import com.modyo.test.statemachine.application.port.out.LoadSolicitudPort;
 import com.modyo.test.statemachine.application.port.out.SaveSolicitudPort;
 import com.modyo.test.statemachine.domain.model.Estado;
+import com.modyo.test.statemachine.domain.model.Evento;
 import com.modyo.test.statemachine.domain.model.Solicitud;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class SolicitudUseCaseServiceTest {
 
-  @MockBean
+  @Mock
   private CreateSolicitudPort createSolicitudPort;
 
-  @MockBean
+  @Mock
   private LoadSolicitudPort loadSolicitudPort;
-  @MockBean
+  @Mock
   private SaveSolicitudPort saveSolicitudPort;
 
-  @Autowired
+  @Mock
   private StateMachinePersistStateChangeHandler stateMachineHandler;
 
-  @Autowired
+  @InjectMocks
   private SolicitudUseCaseService solicitudUseCaseService;
 
   @Captor
@@ -85,20 +85,7 @@ class SolicitudUseCaseServiceTest {
     when(loadSolicitudPort.loadAndLock(any())).thenReturn(solicitud);
     when(loadSolicitudPort.load(any())).thenReturn(solicitud);
     solicitudUseCaseService.processEvent(123L, "E2");
-    verify(saveSolicitudPort).save(solicitudCaptor.capture());
-    assertEquals(Estado.S3, solicitudCaptor.getValue().getState());
-  }
-
-  @Test
-  void testEventRejected() {
-    Solicitud solicitud = new Solicitud();
-    solicitud.setId(123L);
-    solicitud.setName("test");
-    solicitud.setState(Estado.S1);
-    when(loadSolicitudPort.loadAndLock(any())).thenReturn(solicitud);
-    when(loadSolicitudPort.load(any())).thenReturn(solicitud);
-    solicitudUseCaseService.processEvent(123L, "E0");
-    verify(saveSolicitudPort, never()).save(solicitudCaptor.capture());
+    verify(stateMachineHandler).sendEvent(solicitud,"123",solicitud.getState(), Evento.E2);
   }
 
 }

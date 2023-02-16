@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.modyo.ms.commons.core.exceptions.NotFoundException;
 import com.modyo.test.statemachine.adapters.restclient.model.YesNoResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,12 @@ class YesNoRestAdapterTest {
   @Test
   void getAnswerOfNoBody() {
     when(client.getResponse()).thenReturn(ResponseEntity.ok().build());
+    assertFalse(adapter.getAnswer());
+  }
+
+  @Test
+  void getAnswerrOfException() {
+    when(client.getResponse()).thenThrow(NotFoundException.class);
     assertFalse(adapter.getAnswer());
   }
 }

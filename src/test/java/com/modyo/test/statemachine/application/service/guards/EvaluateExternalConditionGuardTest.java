@@ -12,19 +12,17 @@ import com.modyo.test.statemachine.domain.model.Solicitud;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.statemachine.StateContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(classes = {EvaluateExternalConditionGuard.class})
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class EvaluateExternalConditionGuardTest {
 
-  @MockBean
+  @Mock
   LoadRandomAnswerPort adapter;
-  @Autowired
+  @InjectMocks
   private EvaluateExternalConditionGuard guard;
 
   @BeforeEach
