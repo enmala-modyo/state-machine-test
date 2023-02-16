@@ -55,7 +55,10 @@ compileTestJava {
 
 dependencyManagement {
     imports {
+        // For Spring Boot
         mavenBom 'org.springframework.boot:spring-boot-dependencies:2.7.8'
+        // For Spring Cloud - OpenFeign
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2021.0.5"
     }
 }
 
@@ -126,13 +129,6 @@ tasks.withType(Test).configureEach {
 
 testSourceSets {
     integration
-}
-
-// For Spring Cloud - OpenFeign
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2021.0.5"
-    }
 }
 
 // slug size reduction for Heroku deployment
