@@ -59,6 +59,8 @@ stateDiagram-v2
 - El estado S2 es un pseudo-estado de choice/junction, esto quiere decir que cuando una solicitud llega a ese estado
 inmediatamente se evalúan las condiciones asociadas (Guards) y la máquina se mueve al estado correspondiente
 según el resultado de las evaluaciones (S3 o estado final).
+- El Guard `EvaluateExternalConditionGuard` llama a un servicio REST externo para determinar la respuesta, mientras que
+`AlwaysFalseGuard` siempre responde false (es solamente un ejemplo).
 
 ## ¿Cómo utilizar este ejemplo para integrar Spring Statemachine en mi proyecto?
 
