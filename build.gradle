@@ -94,7 +94,6 @@ dependencies {
 
     // Spring Statemachine
     implementation 'org.springframework.statemachine:spring-statemachine-starter:3.2.0'
-    implementation 'org.springframework.statemachine:spring-statemachine-recipes-common:3.2.0'
 
     // OpenFeign
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
