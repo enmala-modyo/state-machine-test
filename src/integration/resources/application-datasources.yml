@@ -1,5 +1,0 @@
-datasources:
-  rest:
-    webServices:
-      yesno:
-        base-url: http://127.0.0.1:1080/yesno/api
