@@ -35,7 +35,9 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 
-@SpringBootTest
+@SpringBootTest(properties = {
+    "datasources.rest.webServices.yesno.base-url=http://127.0.0.1:1080/yesno/api"
+})
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class StateMachineControllerIntegrationTest {
