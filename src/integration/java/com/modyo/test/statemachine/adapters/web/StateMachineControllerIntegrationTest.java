@@ -21,6 +21,7 @@ import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,7 @@ import org.springframework.test.web.servlet.MockMvc;
 })
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayName("Statemachine REST API test")
 class StateMachineControllerIntegrationTest {
 
   public static final String URL_SOLICITUDES_ID_EVENT = "/statemachine/solicitudes/{id}/{event}";
@@ -66,6 +68,7 @@ class StateMachineControllerIntegrationTest {
   }
 
   @Test
+  @DisplayName("Call POST to create a solicitud and verify if it was created")
   @Order(1)
   void givenPostSolicitud_whenSendReq_thenVerifyCreated() throws Exception {
     var expected = new Response<>(expectedDto);
@@ -78,8 +81,9 @@ class StateMachineControllerIntegrationTest {
   }
 
   @Test
+  @DisplayName("Call GET on an existing solicitud and verify if it was retrieved")
   @Order(2)
-  void givenOneSolicitud_whenReq_thenVerifyRetrived() throws Exception {
+  void givenOneSolicitud_whenReq_thenVerifyRetrieved() throws Exception {
     var expected = new Response<>(expectedDto);
     mockMvc.perform(
             get("/statemachine/solicitudes/{id}", 1)
@@ -89,8 +93,19 @@ class StateMachineControllerIntegrationTest {
   }
 
   @Test
+  @DisplayName("Call GET on a non-existent solicitud and verify if return not found")
+  @Order(2)
+  void givenOneNotExistentSolicitud_whenReq_thenVerifyNotFound() throws Exception {
+    mockMvc.perform(
+            get("/statemachine/solicitudes/{id}", -1)
+        ).andDo(print())
+        .andExpect(status().is(404));
+  }
+
+  @Test
   @Order(3)
-  void givenOneSolicitud_whenReqAll_thenVerifyRetrived() throws Exception {
+  @DisplayName("Call GET for all solicitudes and verify if they are retrieved")
+  void givenOneSolicitud_whenReqAll_thenVerifyRetrieved() throws Exception {
     var expected = new Response<>(List.of(expectedDto));
     mockMvc.perform(
             get("/statemachine/solicitudes")
@@ -101,6 +116,7 @@ class StateMachineControllerIntegrationTest {
 
   @Test
   @Order(4)
+  @DisplayName("Send an invalid event and verify nothing happened")
   void givenOneSolicitud_whenSendInvalidEvent_thenVerifyNothingHappened() throws Exception {
     var expected = new Response<>(expectedDto);
     mockMvc.perform(
@@ -112,6 +128,7 @@ class StateMachineControllerIntegrationTest {
 
   @Test
   @Order(5)
+  @DisplayName("Given Solicitud in state INIT, send event E1 and verify solicitud transition to state S1")
   void givenOneSolicitud_whenSendValidEvent_thenVerifyNewState() throws Exception {
     expectedDto.setState("S1");
     var expected = new Response<>(expectedDto);
@@ -124,6 +141,7 @@ class StateMachineControllerIntegrationTest {
 
   @Test
   @Order(6)
+  @DisplayName("Given Solicitud in state S1, send E1 event with external answer NO and verify transition to S3")
   void givenOneSolicitudInStateS1_whenSendE1EventAndExternalAsnwerNo_thenVerifyNewStateIsS3() throws Exception {
     createExpectationForYesNoApiNo();
     var expectedState = "S3";
@@ -135,6 +153,7 @@ class StateMachineControllerIntegrationTest {
   }
 
   @Test
+  @DisplayName("Given Solicitud in state S1, send E1 event with external answer YES and verify transition to state END")
   @Order(7)
   @Sql(statements = {"insert into solicitud values(null,'test','S1')"})
   void givenOneSolicitudInStateS1_whenSendE1EventAndExternalAsnwerYes_thenVerifyNewStateIsEnd() throws Exception {
