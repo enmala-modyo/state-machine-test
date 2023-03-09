@@ -1,6 +1,7 @@
 package com.modyo.test.statemachine.application.service.guards;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -27,14 +28,24 @@ class EvaluateExternalConditionGuardTest {
 
   @BeforeEach
   void setup(){
-    when(adapter.getAnswer()).thenReturn(true);
+
   }
 
   @Test
-  void testEvaluate() {
+  void testEvaluateTrue() {
+    when(adapter.getAnswer()).thenReturn(true);
     StateContext<Estado, Evento> context = mock(StateContext.class);
     when(context.getMessageHeader(anyString())).thenReturn(new Solicitud());
-    assertDoesNotThrow(() -> this.guard.evaluate(context));
+    assertTrue(this.guard.evaluate(context));
   }
+
+  @Test
+  void testEvaluateFalse() {
+    when(adapter.getAnswer()).thenReturn(false);
+    StateContext<Estado, Evento> context = mock(StateContext.class);
+    when(context.getMessageHeader(anyString())).thenReturn(new Solicitud());
+    assertFalse(this.guard.evaluate(context));
+  }
+
 }
 
