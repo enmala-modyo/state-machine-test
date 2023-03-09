@@ -50,6 +50,9 @@ pitest {
     testSourceSets = [sourceSets.test, sourceSets.integration]
     excludedClasses = ['*Application*','*Config*', '*Mapper*', '*Abstract*']
     mutationThreshold = 75
+    //threads = 4
+    historyInputLocation = 'build/.pitHistory'
+    historyOutputLocation = 'build/.pitHistory'
 }
 
 compileJava {
