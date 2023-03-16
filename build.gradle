@@ -46,7 +46,7 @@ apply from: 'gradle/jacoco.gradle'
 pitest {
     //adds dependency to org.pitest:pitest-junit5-plugin and sets "testPlugin" to "junit5"
     junit5PluginVersion = '1.1.2'
-    mutators = ['DEFAULTS','-VOID_METHOD_CALLS']
+    mutators = ['DEFAULTS']
     testSourceSets = [sourceSets.test, sourceSets.integration]
     excludedClasses = ['*Application*','*Config*', '*Mapper*', '*Abstract*']
     mutationThreshold = 75
@@ -131,6 +131,7 @@ dependencies {
     testImplementation 'com.tngtech.archunit:archunit:0.23.1'
     // MockServer for Integration Tests
     testImplementation 'org.mock-server:mockserver-junit-jupiter-no-dependencies:5.14.0'
+    testImplementation "com.github.tomakehurst:wiremock-jre8:2.35.0"
 }
 
 tasks.withType(Test).configureEach {

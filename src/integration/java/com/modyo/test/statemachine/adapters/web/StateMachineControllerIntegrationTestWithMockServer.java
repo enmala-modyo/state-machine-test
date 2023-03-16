@@ -42,7 +42,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("Statemachine REST API test")
-class StateMachineControllerIntegrationTest {
+class StateMachineControllerIntegrationTestWithMockServer {
 
   public static final String URL_SOLICITUDES_ID_EVENT = "/statemachine/solicitudes/{id}/{event}";
   private static ClientAndServer mockServer;
@@ -70,6 +70,7 @@ class StateMachineControllerIntegrationTest {
   @Test
   @DisplayName("Call POST to create a solicitud and verify if it was created")
   @Order(1)
+  @Sql(statements = {"truncate table solicitud"})
   void givenPostSolicitud_whenSendReq_thenVerifyCreated() throws Exception {
     var expected = new Response<>(expectedDto);
     mockMvc.perform(
