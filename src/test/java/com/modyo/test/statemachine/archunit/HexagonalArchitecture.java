@@ -9,6 +9,7 @@ public class HexagonalArchitecture extends ArchitectureElement {
 
   private Adapters adapters;
   private ApplicationLayer applicationLayer;
+  private String configurationPackage;
   private final List<String> domainPackages = new ArrayList<>();
 
   public static HexagonalArchitecture boundedContext(String basePackage) {
@@ -35,7 +36,7 @@ public class HexagonalArchitecture extends ArchitectureElement {
   }
 
   public HexagonalArchitecture withConfiguration(String packageName) {
-    String configurationPackage = fullQualifiedPackage(packageName);
+    this.configurationPackage = fullQualifiedPackage(packageName);
     return this;
   }
 
@@ -49,8 +50,10 @@ public class HexagonalArchitecture extends ArchitectureElement {
   public void check(JavaClasses classes) {
     this.adapters.doesNotContainEmptyPackages();
     this.adapters.dontDependOnEachOther(classes);
+    this.adapters.doesNotDependOn(this.configurationPackage, classes);
     this.applicationLayer.doesNotContainEmptyPackages();
     this.applicationLayer.doesNotDependOn(this.adapters.getBasePackage(), classes);
+    this.applicationLayer.doesNotDependOn(this.configurationPackage, classes);
     this.applicationLayer.incomingAndOutgoingPortsDoNotDependOnEachOther(classes);
     this.domainDoesNotDependOnOtherPackages(classes);
   }

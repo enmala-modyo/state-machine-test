@@ -18,13 +18,14 @@ class DependencyRuleTests {
         .withAdaptersLayer(adaptersPackage)
         .incoming("web")
         .outgoing("persistence")
+        .outgoing("restclient")
         .and()
         .withApplicationLayer(applicationPackage)
         .services("service")
         .incomingPorts("port.in")
         .outgoingPorts("port.out")
         .and()
-        .withConfiguration("configuration")
+        .withConfiguration("config")
         .check(new ClassFileImporter()
             .importPackages(rootPackageName));
   }
